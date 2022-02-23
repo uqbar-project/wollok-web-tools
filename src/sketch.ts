@@ -5,7 +5,7 @@ import { DEFAULT_GAME_ASSETS_DIR, GameProject } from "./gameProject"
 import { GameSound } from "./GameSound"
 import { buildKeyPressEvent, canvasResolution, defaultImgs, queueEvent, resizeCanvas, step, wKeyCode } from "./render"
 
-export default (project: GameProject, interpreter: Interpreter) => (p: p5) => {
+export default (project: GameProject, interpreter: Interpreter, canvasParent?: Element) => (p: p5) => {
     const images = new Map<string, p5.Image>()
     const sounds = new Map<Id, GameSound>()
     let stop = false
@@ -14,7 +14,8 @@ export default (project: GameProject, interpreter: Interpreter) => (p: p5) => {
 
     p.setup = () => {
         const { width, height } = canvasResolution(interpreter)
-        p.createCanvas(width, height)//.parent(canvasParentRef)
+        const renderer = p.createCanvas(width, height)
+        if (canvasParent) renderer.parent(canvasParent)
 
         defaultImgs.forEach(path => images.set(path, p.loadImage(DEFAULT_GAME_ASSETS_DIR + path)))
 
@@ -23,7 +24,7 @@ export default (project: GameProject, interpreter: Interpreter) => (p: p5) => {
                 images.set(path, p.loadImage(url))
             )
         )
-        // resizeCanvas(width, height)
+        resizeCanvas(width, height, renderer, canvasParent)
     }
 
     p.draw = () => {

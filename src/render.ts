@@ -1,4 +1,4 @@
-import p5 from 'p5'
+import p5, { Renderer } from 'p5'
 import { Evaluation, Id, RuntimeObject } from 'wollok-ts'
 import { Interpreter } from 'wollok-ts/dist/interpreter/interpreter'
 import { GameProject } from './gameProject'
@@ -164,22 +164,17 @@ export function queueEvent(interpreter: Interpreter, ...events: RuntimeObject[])
   events.forEach(e => interpreter.send('queueEvent', io, e))
 }
 
-function canvasAspectRatio(gameWidth: number, gameHeight: number) {
-  const screenWidth = window.innerWidth
-  const screenHeight = window.innerHeight
-  const ratio = min(screenWidth / gameWidth, screenHeight / gameHeight)
-
-  return ratio
+function canvasAspectRatio(gameWidth: number, gameHeight: number, parentWidth: number, parentHeight: number) {
+  return min(parentWidth / gameWidth, parentHeight / gameHeight)
 }
 
-export function resizeCanvas(gameWidth: number, gameHeight: number) {
-  const canvas = document.getElementById('defaultCanvas0')
-  const ratio = canvasAspectRatio(gameWidth, gameHeight)
+export function resizeCanvas(gameWidth: number, gameHeight: number, rendered: Renderer, canvasParent?: Element) {
+  const parentWidth = canvasParent?.clientWidth || window.innerWidth
+  const parentHeight = canvasParent?.clientHeight || window.innerHeight
+  const ratio = canvasAspectRatio(gameWidth, gameHeight, parentWidth, parentHeight)
 
-  canvas?.style.removeProperty('width')
-  canvas?.style.removeProperty('height')
-  canvas!.style.width = `${gameWidth * ratio}px`
-  canvas!.style.height = `${gameHeight * ratio}px`
+  rendered.style('width', `${gameWidth * ratio}px`)
+  rendered.style('height', `${gameHeight * ratio}px`)
 }
 
 export function removeIfStartsWith(path: string, prefix: string): string {

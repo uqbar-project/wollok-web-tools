@@ -15,10 +15,10 @@ class Game {
         this.environment = buildEnvironment(project.sources)
     }
 
-    start() {
+    start(canvasParent?: Element) {
         const interpreter = interpret(this.environment, WRENatives)
         interpreter.exec(getProgramIn(this.project.main, this.environment))
-        new p5(sketch(this.project, interpreter))
+        new p5(sketch(this.project, interpreter, canvasParent))
     }
 }
 
