@@ -6,6 +6,8 @@
         "module": "es2015",
         "sourceMap": true,
         "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "downlevelIteration": true,
         "moduleResolution": "node",
         "lib": ["es2016", "dom", "es5"]
       },

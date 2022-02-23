@@ -1,0 +1,12 @@
+import wollok.game.*
+
+object pepita {
+    var energia = 100
+    var property position = game.at(1,1)
+    const property image = 'uqbar.png'
+}
+
+program juego {
+    game.addVisualCharacter(pepita)
+    game.start()
+}
