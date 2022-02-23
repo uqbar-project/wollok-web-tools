@@ -1,6 +1,6 @@
 {
   "name": "wollok-game-web",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Wollok Game library for browsers",
   "main": "dist/index.js",
   "repository": "https://github.com/uqbar-project/wollok-game-web",
@@ -8,7 +8,8 @@
   "license": "GPL-3.0",
   "scripts": {
     "test": "http-server -o test",
-    "build": "webpack watch --mode development"
+    "build": "webpack watch --mode development",
+    "prepublishOnly": "webpack --mode production"
   },
   "dependencies": {
     "p5": "^1.4.1",
