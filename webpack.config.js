@@ -1,11 +1,11 @@
 const path = require('path');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   entry: './src/index.ts',
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
       },
@@ -13,6 +13,15 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+  },
+  plugins: [
+    new CleanWebpackPlugin({
+      protectWebpackAssets: false,
+      cleanAfterEveryBuildPatterns: ['*.LICENSE.txt'],
+    })
+  ],
+  optimization: {
+    minimize: false
   },
   output: {
     filename: 'index.js',

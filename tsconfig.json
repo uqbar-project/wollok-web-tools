@@ -1,17 +1,15 @@
 {
     "compilerOptions": {
-        "baseUrl": ".",
-        "outDir": "./client",
+        "baseUrl": "./src",
+        "outDir": "./dist",
         "target": "es5",
         "module": "es2015",
         "sourceMap": true,
+        "declaration": true,
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
         "downlevelIteration": true,
         "moduleResolution": "node",
         "lib": ["es2016", "dom", "es5"]
-      },
-      "include": [
-        "./src/**/*"
-      ]
+      }
 }
