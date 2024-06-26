@@ -1,9 +1,8 @@
 import p5, { Renderer } from 'p5'
-import { Evaluation, Id, RuntimeObject } from 'wollok-ts'
-import { Interpreter } from 'wollok-ts/dist/interpreter/interpreter'
+import { Evaluation, Id, Interpreter, RuntimeObject } from 'wollok-ts'
 import { GameProject } from './gameProject'
-import { GameSound, SoundState, SoundStatus } from './GameSound'
-import { DrawableMessage, drawMessage, TEXT_SIZE, TEXT_STYLE } from './messages'
+import { GameSound, SoundState, SoundStatus } from './gameSound'
+import { DrawableMessage, TEXT_SIZE, TEXT_STYLE, drawMessage } from './messages'
 
 const { round, min } = Math
 

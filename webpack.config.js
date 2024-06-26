@@ -13,6 +13,7 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    fallback: { "console": false }
   },
   plugins: [
     new CleanWebpackPlugin({

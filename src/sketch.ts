@@ -1,8 +1,7 @@
 import p5 from "p5"
-import { Id } from "wollok-ts"
-import { Interpreter } from "wollok-ts/dist/interpreter/interpreter"
+import { Id, Interpreter } from "wollok-ts"
 import { DEFAULT_GAME_ASSETS_DIR, GameProject } from "./gameProject"
-import { GameSound } from "./GameSound"
+import { GameSound } from "./gameSound"
 import { buildKeyPressEvent, canvasResolution, defaultImgs, queueEvent, resizeCanvas, step, wKeyCode } from "./render"
 
 export default (project: GameProject, interpreter: Interpreter, canvasParent?: Element) => (p: p5) => {

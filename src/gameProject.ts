@@ -1,4 +1,4 @@
-import { Environment, Node, Package } from 'wollok-ts'
+import { Environment, Node, Package, Program } from 'wollok-ts'
 
 // TODO: Move to more general place
 const WOLLOK_FILE_EXTENSION = 'wlk'
@@ -48,7 +48,7 @@ export class NoProgramException extends Error { }
 
 export const getProgramIn = (packageFQN: string, environment: Environment): Node => {
   const programWollokFile = environment.getNodeByFQN<Package>(packageFQN)
-  const wollokProgram = programWollokFile.members.find(entity => entity.is('Program'))
+  const wollokProgram = programWollokFile.members.find(entity => entity.is(Program))
   if (!wollokProgram) throw new NoProgramException('Program not found')
   return wollokProgram
 }

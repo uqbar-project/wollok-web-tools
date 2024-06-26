@@ -1,6 +1,5 @@
 import p5 from "p5"
-import { buildEnvironment, WRENatives } from 'wollok-ts'
-import interpret from 'wollok-ts/dist/interpreter/interpreter'
+import { buildEnvironment, WRENatives, interpret } from 'wollok-ts'
 import { GameProject, getProgramIn } from "./gameProject"
 import sketch from "./sketch"
 
