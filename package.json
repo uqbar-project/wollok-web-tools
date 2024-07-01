@@ -8,7 +8,7 @@
   "license": "GPL-3.0",
   "scripts": {
     "test": "http-server -o test",
-    "build": "webpack watch --mode development",
+    "build": "rm -rf dist && tsc && webpack watch --mode development",
     "prepublishOnly": "webpack --mode production"
   },
   "dependencies": {
