@@ -42,19 +42,20 @@ export function buildKeyPressEvent(interpreter: Interpreter, keyCode: string): R
 }
 
 export interface VisualState {
-  image?: string;
-  position: Position;
-  message?: string;
-  text?: string;
-  textColor?: string;
+  image?: string
+  position: Position
+  message?: string
+  messageTime?: number
+  text?: string
+  textColor?: string
 }
 export interface Position {
-  x: number;
-  y: number;
+  x: number
+  y: number
 }
 export interface Image {
-  name: string;
-  url: string;
+  name: string
+  url: string
 }
 
 export function hexaToColor(textColor?: string): string | undefined { return !textColor ? undefined : '#' + textColor }
@@ -63,12 +64,13 @@ export function visualState(interpreter: Interpreter, visual: RuntimeObject): Vi
   const image = invokeMethod(interpreter, visual, 'image')
   const text = invokeMethod(interpreter, visual, 'text')
   const textColor = invokeMethod(interpreter, visual, 'textColor')
-  const position = interpreter.send('position', visual)!
-  const roundedPosition = interpreter.send('round', position)!
-  const x = roundedPosition.get('x')!.innerNumber!
-  const y = roundedPosition.get('y')!.innerNumber!
+  const position = interpreter.send('position', visual)
+  const roundedPosition = interpreter.send('round', position)
+  const x = roundedPosition.get('x')!.innerNumber
+  const y = roundedPosition.get('y')!.innerNumber
   const message = visual.get('message')?.innerString
-  return { image, position: { x, y }, text, textColor, message }
+  const messageTime = visual.get('messageTime')?.innerNumber
+  return { image, position: { x, y }, text, textColor, message, messageTime }
 }
 
 export function flushEvents(interpreter: Interpreter, ms: number): void {

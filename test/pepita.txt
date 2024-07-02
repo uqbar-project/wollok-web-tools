@@ -4,9 +4,12 @@ object pepita {
     var energia = 100
     var property position = game.at(1,1)
     const property image = 'uqbar.png'
+    // const property text = 'Pepita'
+    
 }
 
 program juego {
     game.addVisualCharacter(pepita)
+    keyboard.space().onPressDo({ game.say(pepita, "Ouch") })
     game.start()
 }

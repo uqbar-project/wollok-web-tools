@@ -1,9 +1,10 @@
 import p5, { Renderer } from 'p5'
-import { Evaluation, Id, Interpreter } from 'wollok-ts'
+import { Id, Interpreter } from 'wollok-ts'
+import Game from './game'
 import { GameProject } from './gameProject'
 import { GameSound, SoundState, SoundStatus } from './gameSound'
 import { DrawableMessage, TEXT_SIZE, TEXT_STYLE, drawMessage } from './messages'
-import { Position, visualState, flushEvents } from './utils'
+import { Position, flushEvents } from './utils'
 
 const { round, min } = Math
 
@@ -89,7 +90,7 @@ export function resizeCanvas(gameWidth: number, gameHeight: number, rendered: Re
 }
 
 export function removeIfStartsWith(path: string, prefix: string): string {
-  if(path.startsWith(prefix)){
+  if (path.startsWith(prefix)) {
     return path.replace(prefix, '')
   }
 
@@ -101,16 +102,9 @@ export function removeIfStartsWith(path: string, prefix: string): string {
 // GAME CYCLE
 // ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-interface SketchProps {
-  gameProject: GameProject
-  evaluation: Evaluation
-  exit: () => void
-}
-
 interface StepAssets {
   sketch: p5
-  gameProject: GameProject
-  interpreter: Interpreter
+  game: Game
   sounds: Map<Id, GameSound>
   images: Map<Id, p5.Image>
   audioMuted: boolean
@@ -126,15 +120,16 @@ interface SoundAssets {
 }
 
 export function step(assets: StepAssets) {
-  const { sketch, gameProject, interpreter, sounds, images, audioMuted, gamePaused } = assets
+  const { sketch, game, sounds, images, audioMuted, gamePaused } = assets
+  const { project: gameProject, interpreter } = game
 
-  if(!gamePaused) {
+  if (!gamePaused) {
     window.performance.mark('update-start')
-    flushEvents(interpreter, sketch.millis())
+    flushEvents(game.interpreter, sketch.millis())
     updateSound({ gameProject, interpreter, sounds, audioMuted })
     window.performance.mark('update-end')
     window.performance.mark('draw-start')
-    render(interpreter, sketch, images)
+    render(game, sketch, images)
     window.performance.mark('draw-end')
 
     window.performance.measure('update-start-to-end', 'update-start', 'update-end')
@@ -181,43 +176,41 @@ function updateSound(assets: SoundAssets) {
   })
 }
 
-function render(interpreter: Interpreter, sketch: p5, images: Map<string, p5.Image>) {
-  const game = interpreter.object('wollok.game.game')
-  const cellPixelSize = game.get('cellSize')!.innerNumber!
-  const boardGroundPath = game.get('boardGround')?.innerString
+function render(game: Game, sketch: p5, images: Map<string, p5.Image>) {
+  const { cellSize, boardGround, ground, width, height, } = game.board()
 
-  if (boardGroundPath) sketch.image(baseDrawable(images, boardGroundPath).drawableImage!.image, 0, 0, sketch.width, sketch.height)
+  if (boardGround) sketch.image(baseDrawable(images, boardGround).drawableImage!.image, 0, 0, sketch.width, sketch.height)
   else {
-    const groundImage = baseDrawable(images, game.get('ground')!.innerString!).drawableImage!.image
-    const gameWidth = round(game.get('width')!.innerNumber!)
-    const gameHeight = round(game.get('height')!.innerNumber!)
+    const groundImage = baseDrawable(images, ground).drawableImage!.image
+    const gameWidth = round(width)
+    const gameHeight = round(height)
 
     for (let x = 0; x < gameWidth; x++)
       for (let y = 0; y < gameHeight; y++)
-        sketch.image(groundImage, x * cellPixelSize, y * cellPixelSize, cellPixelSize, cellPixelSize)
+        sketch.image(groundImage, x * cellSize, y * cellSize, cellSize, cellSize)
   }
 
   const messagesToDraw: DrawableMessage[] = []
-  for (const visual of game.get('visuals')?.innerCollection ?? []) {
-    const { image: stateImage, position, message, text, textColor } = visualState(interpreter, visual)
+  for (const visual of game.visuals()) {
+    const { image: stateImage, position, message, messageTime, text, textColor } = visual
     const drawable = stateImage === undefined ? {} : baseDrawable(images, stateImage)
-    let x = position.x * cellPixelSize
-    let y = sketch.height - (position.y + 1) * cellPixelSize
+    let x = position.x * cellSize
+    let y = sketch.height - (position.y + 1) * cellSize
 
     if (stateImage) {
-      x = position.x * cellPixelSize
-      y = sketch.height - position.y * cellPixelSize - drawable.drawableImage!.image.height
+      x = position.x * cellSize
+      y = sketch.height - position.y * cellSize - drawable.drawableImage!.image.height
       moveAllTo(drawable, { x, y })
     }
 
-    if (message && visual.get('messageTime')!.innerNumber! > sketch.millis())
+    if (message && messageTime > sketch.millis())
       messagesToDraw.push({ message, x, y })
 
     draw(sketch, drawable)
 
     if (text) {
-      x = (position.x + 0.5) * cellPixelSize
-      y = sketch.height - (position.y + 0.5) * cellPixelSize
+      x = (position.x + 0.5) * cellSize
+      y = sketch.height - (position.y + 0.5) * cellSize
       const drawableText = { text, position: { x, y }, color: hexaToColor(textColor) }
       write(sketch, drawableText)
     }
