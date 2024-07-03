@@ -1,10 +1,10 @@
 import p5, { SoundFile } from "p5"
 import { Id } from "wollok-ts"
 import Game from "./game"
-import { DEFAULT_GAME_ASSETS_DIR, MediaFile } from "./gameProject"
+import { MediaFile } from "./gameProject"
 import { GameSound } from "./gameSound"
 import { resizeCanvas } from "./render"
-import { defaultImgs, wKeyCode } from "./utils"
+import { DEFAULT_GAME_ASSETS_DIR, defaultImgs, wKeyCode } from "./utils"
 
 
 export default (game: Game, projectImages: MediaFile[], projectSounds: MediaFile[], canvasParent?: Element) => (p: p5) => {

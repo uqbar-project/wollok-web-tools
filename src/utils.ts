@@ -1,4 +1,8 @@
-import { Interpreter, RuntimeObject } from 'wollok-ts'
+import { Id, Interpreter, RuntimeObject } from 'wollok-ts'
+
+export const VALID_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif']
+export const VALID_SOUND_EXTENSIONS = ['mp3', 'ogg', 'wav']
+export const DEFAULT_GAME_ASSETS_DIR = 'https://raw.githubusercontent.com/uqbar-project/wollok/dev/org.uqbar.project.wollok.game/assets/'
 
 const { round } = Math
 
@@ -97,4 +101,40 @@ export function canvasResolution(interpreter: Interpreter): Resolution {
 export function queueEvent(interpreter: Interpreter, ...events: RuntimeObject[]): void {
   const io = interpreter.object('wollok.lang.io')
   events.forEach(e => interpreter.send('queueEvent', io, e))
+}
+
+export interface BoardState {
+  cellSize: number
+  boardGround?: string
+  ground: string
+  width: number
+  height: number
+}
+
+export function boardState(game: RuntimeObject): BoardState {
+  const cellSize = game.get('cellSize')!.innerNumber
+  const boardGround = game.get('boardGround')?.innerString
+  const ground = game.get('ground')!.innerString
+  const width = game.get('width')!.innerNumber
+  const height = game.get('height')!.innerNumber
+  return { cellSize, boardGround, ground, width, height }
+}
+
+export type SoundStatus = 'played' | 'paused' | 'stopped'
+export interface SoundState {
+  id: Id;
+  file: string;
+  status: SoundStatus;
+  volume: number;
+  loop: boolean;
+}
+
+export function soundState(soundInstance: RuntimeObject) {
+  return {
+    id: soundInstance.id,
+    file: soundInstance.get('file')!.innerString!,
+    status: soundInstance.get('status')!.innerString! as SoundStatus,
+    volume: soundInstance.get('volume')!.innerNumber!,
+    loop: soundInstance.get('loop')!.innerBoolean!,
+  }
 }

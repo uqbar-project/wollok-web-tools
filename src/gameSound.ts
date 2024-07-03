@@ -1,15 +1,6 @@
 // import 'p5'
 import { SoundFile } from 'p5'
-import { Id } from 'wollok-ts'
-
-export type SoundStatus = 'played' | 'paused' | 'stopped'
-export interface SoundState {
-  id: Id;
-  file: string;
-  status: SoundStatus;
-  volume: number;
-  loop: boolean;
-}
+import { SoundState } from './utils'
 
 export class GameSound {
   private lastSoundState: SoundState

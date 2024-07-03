@@ -2,10 +2,10 @@ import p5 from "p5"
 import { Socket } from "socket.io"
 import { Environment, Id, Interpreter, WRENatives, buildEnvironment, interpret } from 'wollok-ts'
 import { GameProject, MediaFile, getProgramIn } from "./gameProject"
-import { GameSound, SoundState, SoundStatus } from "./gameSound"
+import { GameSound } from "./gameSound"
 import { step } from "./render"
 import sketch from "./sketch"
-import { Asset, Resolution, VisualState, buildKeyPressEvent, canvasResolution, flushEvents, queueEvent, visualState } from "./utils"
+import { Asset, BoardState, Resolution, SoundState, VisualState, boardState, buildKeyPressEvent, canvasResolution, flushEvents, queueEvent, soundState, visualState } from "./utils"
 
 const { round } = Math
 
@@ -16,14 +16,6 @@ interface GameState {
     // stop: boolean
     gamePaused: boolean
     audioMuted: boolean
-}
-
-interface BoardState {
-    cellSize: number
-    boardGround?: string
-    ground: string
-    width: number
-    height: number
 }
 
 export interface Game {
@@ -56,15 +48,7 @@ export class LocalGame implements Game {
 
     get running() { return this.gameObject.get('running')!.innerBoolean! }
 
-    get board(): BoardState {
-        const game = this.gameObject
-        const cellSize = game.get('cellSize')!.innerNumber
-        const boardGround = game.get('boardGround')?.innerString
-        const ground = game.get('ground')!.innerString
-        const width = game.get('width')!.innerNumber
-        const height = game.get('height')!.innerNumber
-        return { cellSize, boardGround, ground, width, height }
-    }
+    get board(): BoardState { return boardState(this.gameObject) }
 
     get visuals(): VisualState[] {
         const visuals = this.gameObject.get('visuals')?.innerCollection ?? []
@@ -75,14 +59,7 @@ export class LocalGame implements Game {
 
     get soundStates() {
         const soundInstances = this.interpreter.object('wollok.game.game').get('sounds')?.innerCollection ?? []
-        return soundInstances.map(soundInstance => ({
-            id: soundInstance.id,
-            file: soundInstance.get('file')!.innerString!,
-            status: soundInstance.get('status')!.innerString! as SoundStatus,
-            volume: soundInstance.get('volume')!.innerNumber!,
-            loop: soundInstance.get('loop')!.innerBoolean!,
-        })
-        )
+        return soundInstances.map(soundState)
     }
 
     queueEvent(...events: string[]) {
@@ -102,8 +79,8 @@ export class SocketGame implements Game {
     socket: Socket
 
     board: BoardState
-    images: MediaFile[];
-    sounds: MediaFile[];
+    images: MediaFile[] = []
+    sounds: MediaFile[] = []
 
     visuals: VisualState[] = []
     soundStates: SoundState[] = []
@@ -113,16 +90,18 @@ export class SocketGame implements Game {
     constructor(socket: Socket) {
         this.socket = socket
 
+        this.socket.emit("ready")
+
         socket.on('board', data => this.board = data)
         socket.on('visuals', data => this.visuals = data)
-        socket.on('soundStates', data => this.soundStates = data)
+        socket.on('sounds', data => this.soundStates = data)
 
         socket.on("images", (imgs: Asset[]) => {
             imgs.forEach(({ name, url }) =>
                 this.images.push({ possiblePaths: [name], url })
             )
         })
-        socket.on("sounds", (sounds: Asset[]) => {
+        socket.on("music", (sounds: Asset[]) => {
             sounds.forEach(({ name, url }) =>
                 this.sounds.push({ possiblePaths: [name], url })
             )
@@ -132,7 +111,6 @@ export class SocketGame implements Game {
     }
 
     start(canvasParent?: Element) {
-        this.socket.emit("start")
         this.running = true
         return new p5(sketch(this, this.images, this.sounds, canvasParent))
     }

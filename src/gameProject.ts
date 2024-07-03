@@ -1,12 +1,10 @@
 import { Environment, Node, Package, Program } from 'wollok-ts'
+import { VALID_IMAGE_EXTENSIONS, VALID_SOUND_EXTENSIONS } from './utils'
 
 // TODO: Move to more general place
 const WOLLOK_FILE_EXTENSION = 'wlk'
 const WOLLOK_PROGRAM_EXTENSION = 'wpgm'
 const EXPECTED_WOLLOK_EXTENSIONS = [WOLLOK_FILE_EXTENSION, WOLLOK_PROGRAM_EXTENSION]
-export const VALID_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif']
-const VALID_SOUND_EXTENSIONS = ['mp3', 'ogg', 'wav']
-export const DEFAULT_GAME_ASSETS_DIR = 'https://raw.githubusercontent.com/uqbar-project/wollok/dev/org.uqbar.project.wollok.game/assets/'
 
 export interface File {
   name: string
