@@ -10,6 +10,9 @@ object pepita {
 
 program juego {
     game.addVisualCharacter(pepita)
-    keyboard.space().onPressDo({ game.say(pepita, "Ouch") })
+    keyboard.space().onPressDo({ 
+        game.say(pepita, "Ouch") 
+        // game.sound('musica.mp3').play()
+    })
     game.start()
 }

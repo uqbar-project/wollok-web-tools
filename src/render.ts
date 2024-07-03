@@ -1,10 +1,9 @@
-import p5, { Renderer } from 'p5'
-import { Id, Interpreter } from 'wollok-ts'
+import p5, { Renderer, SoundFile } from 'p5'
+import { Id } from 'wollok-ts'
 import Game from './game'
-import { GameProject } from './gameProject'
-import { GameSound, SoundState, SoundStatus } from './gameSound'
+import { GameSound } from './gameSound'
 import { DrawableMessage, TEXT_SIZE, TEXT_STYLE, drawMessage } from './messages'
-import { Position, flushEvents } from './utils'
+import { Position } from './utils'
 
 const { round, min } = Math
 
@@ -105,28 +104,20 @@ export function removeIfStartsWith(path: string, prefix: string): string {
 interface StepAssets {
   sketch: p5
   game: Game
-  sounds: Map<Id, GameSound>
   images: Map<Id, p5.Image>
+  sounds: Map<Id, SoundFile>
+  currentSounds: Map<Id, GameSound>
   audioMuted: boolean
   gamePaused: boolean
 }
 
-interface SoundAssets {
-  gameProject: GameProject
-  interpreter: Interpreter
-  sounds: Map<Id, GameSound>
-  audioMuted?: boolean
-  gamePaused?: boolean
-}
-
 export function step(assets: StepAssets) {
-  const { sketch, game, sounds, images, audioMuted, gamePaused } = assets
-  const { project: gameProject, interpreter } = game
+  const { sketch, game, sounds, currentSounds, images, audioMuted, gamePaused } = assets
 
   if (!gamePaused) {
     window.performance.mark('update-start')
-    flushEvents(game.interpreter, sketch.millis())
-    updateSound({ gameProject, interpreter, sounds, audioMuted })
+    game.flushEvents(sketch.millis())
+    updateSound(game, sounds, currentSounds, audioMuted)
     window.performance.mark('update-end')
     window.performance.mark('draw-start')
     render(game, sketch, images)
@@ -136,48 +127,40 @@ export function step(assets: StepAssets) {
     window.performance.measure('draw-start-to-end', 'draw-start', 'draw-end')
   }
   else {
-    updateSound({ gameProject, interpreter, sounds, gamePaused })
+    updateSound(game, sounds, currentSounds, audioMuted)
   }
   return undefined
 }
 
-function updateSound(assets: SoundAssets) {
-  const { gameProject, interpreter, sounds, audioMuted, gamePaused } = assets
-  const soundInstances = gamePaused ? [] : interpreter.object('wollok.game.game').get('sounds')?.innerCollection ?? []
+export function updateSound(game: Game, sounds: Map<string, SoundFile>, currentSounds: Map<Id, GameSound>, audioMuted: boolean) {
+  const { soundStates } = game
 
-  for (const [id, sound] of sounds.entries()) {
-    if (!soundInstances.some(sound => sound.id === id)) {
+  for (const [id, sound] of currentSounds.entries()) {
+    if (!soundStates.some(sound => sound.id === id)) {
       sound.stopSound()
-      sounds.delete(id)
+      currentSounds.delete(id)
     } else {
       sound.playSound()
     }
   }
 
-  soundInstances.forEach(soundInstance => {
-    const soundState: SoundState = {
-      id: soundInstance.id,
-      file: soundInstance.get('file')!.innerString!,
-      status: soundInstance.get('status')!.innerString! as SoundStatus,
-      volume: audioMuted ? 0 : soundInstance.get('volume')!.innerNumber!,
-      loop: soundInstance.get('loop')!.innerBoolean!,
-    }
+  soundStates.forEach(soundState => {
+    if (audioMuted) soundState.volume = 0
 
-    let sound = sounds.get(soundState.id)
+    let sound = currentSounds.get(soundState.id)
     if (!sound) {
-      const soundPath = gameProject.sounds.find(({ possiblePaths }) => possiblePaths.includes(soundState.file))?.url
+      const soundPath = sounds.get(soundState.file)
       if (soundPath) { // TODO: add soundfile not found exception
         sound = new GameSound(soundState, soundPath)
-        sounds.set(soundState.id, sound)
+        currentSounds.set(soundState.id, sound)
       }
     }
-
     sound?.update(soundState)
   })
 }
 
 function render(game: Game, sketch: p5, images: Map<string, p5.Image>) {
-  const { cellSize, boardGround, ground, width, height, } = game.board()
+  const { cellSize, boardGround, ground, width, height, } = game.board
 
   if (boardGround) sketch.image(baseDrawable(images, boardGround).drawableImage!.image, 0, 0, sketch.width, sketch.height)
   else {
@@ -191,7 +174,7 @@ function render(game: Game, sketch: p5, images: Map<string, p5.Image>) {
   }
 
   const messagesToDraw: DrawableMessage[] = []
-  for (const visual of game.visuals()) {
+  for (const visual of game.visuals) {
     const { image: stateImage, position, message, messageTime, text, textColor } = visual
     const drawable = stateImage === undefined ? {} : baseDrawable(images, stateImage)
     let x = position.x * cellSize

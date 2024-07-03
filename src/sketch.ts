@@ -1,39 +1,48 @@
-import p5 from "p5"
+import p5, { SoundFile } from "p5"
 import { Id } from "wollok-ts"
 import Game from "./game"
-import { DEFAULT_GAME_ASSETS_DIR } from "./gameProject"
+import { DEFAULT_GAME_ASSETS_DIR, MediaFile } from "./gameProject"
 import { GameSound } from "./gameSound"
 import { resizeCanvas } from "./render"
 import { defaultImgs, wKeyCode } from "./utils"
 
-export default (game: Game, canvasParent?: Element) => (p: p5) => {
+
+export default (game: Game, projectImages: MediaFile[], projectSounds: MediaFile[], canvasParent?: Element) => (p: p5) => {
     const images = new Map<string, p5.Image>()
-    const sounds = new Map<Id, GameSound>()
+    const sounds = new Map<Id, SoundFile>()
+    const currentSounds = new Map<Id, GameSound>()
+
     let stop = false
     let gamePaused = false
     let audioMuted = false
 
     p.preload = () => {
-        defaultImgs.forEach(path => 
+        defaultImgs.forEach(path =>
             images.set(path, p.loadImage(DEFAULT_GAME_ASSETS_DIR + path))
         )
-        game.images.forEach(({ possiblePaths, url }) =>
+        projectImages.forEach(({ possiblePaths, url }) =>
             possiblePaths.forEach(path =>
                 images.set(path, p.loadImage(url))
             )
         )
+        projectSounds.forEach(({ possiblePaths, url }) =>
+            possiblePaths.forEach(path =>
+                sounds.set(path, new SoundFile(url))
+            )
+        ) 
     }
 
     p.setup = () => {
-        const { width, height } = game.canvasResolution()
+        const { width, height } = game.canvasResolution
         const renderer = p.createCanvas(width, height)
         if (canvasParent) renderer.parent(canvasParent)
         resizeCanvas(width, height, renderer, canvasParent)
     }
 
     p.draw = () => {
+        if (gamePaused) return;
         if (!game.running) { stop = true }
-        else game.step(p, { sounds, images, audioMuted, gamePaused })
+        else game.step(p, { images, sounds, currentSounds, audioMuted, gamePaused })
     }
 
 

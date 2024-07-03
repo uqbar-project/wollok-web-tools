@@ -53,10 +53,15 @@ export interface Position {
   x: number
   y: number
 }
-export interface Image {
+export interface Asset {
   name: string
   url: string
 }
+export interface Resolution {
+  width: number;
+  height: number;
+}
+
 
 export function hexaToColor(textColor?: string): string | undefined { return !textColor ? undefined : '#' + textColor }
 
@@ -81,12 +86,7 @@ export function flushEvents(interpreter: Interpreter, ms: number): void {
   )
 }
 
-export interface CanvasResolution {
-  width: number;
-  height: number;
-}
-
-export function canvasResolution(interpreter: Interpreter): CanvasResolution {
+export function canvasResolution(interpreter: Interpreter): Resolution {
   const game = interpreter.object('wollok.game.game')
   const cellPixelSize = game.get('cellSize')!.innerNumber!
   const width = round(game.get('width')!.innerNumber!) * cellPixelSize
