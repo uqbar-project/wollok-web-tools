@@ -1,12 +1,9 @@
 declare global {
-    var asd: number
     interface Window {
         LocalGame: typeof LocalGame
         SocketGame: typeof SocketGame
     }
 }
-
-global.asd = 87
 
 import p5 from "p5"
 global.p5 = p5
