@@ -1,62 +1,11 @@
-import p5, { Renderer } from 'p5'
-import { Evaluation, Id, RuntimeObject } from 'wollok-ts'
-import { Interpreter } from 'wollok-ts/dist/interpreter/interpreter'
-import { GameProject } from './gameProject'
-import { GameSound, SoundState, SoundStatus } from './GameSound'
-import { DrawableMessage, drawMessage, TEXT_SIZE, TEXT_STYLE } from './messages'
+import p5, { Renderer, SoundFile } from 'p5'
+import { Id } from 'wollok-ts'
+import Game from './game'
+import { GameSound } from './gameSound'
+import { DrawableMessage, TEXT_SIZE, TEXT_STYLE, drawMessage } from './messages'
+import { Position } from './utils'
 
 const { round, min } = Math
-
-export const defaultImgs = [
-  'ground.png',
-  'wko.png',
-  'speech.png',
-  'speech2.png',
-  'speech3.png',
-  'speech4.png',
-]
-
-function invokeMethod(interpreter: Interpreter, visual: RuntimeObject, method: string) {
-  const lookedUpMethod = visual.module.lookupMethod(method, 0)
-  return lookedUpMethod && interpreter.invoke(lookedUpMethod, visual)!.innerString
-}
-
-export function wKeyCode(keyName: string, keyCode: number): string { //These keyCodes correspond to http://keycode.info/
-  if (keyCode >= 48 && keyCode <= 57) return `Digit${keyName}` //Numbers (non numpad)
-  if (keyCode >= 65 && keyCode <= 90) return `Key${keyName.toUpperCase()}` //Letters
-  if (keyCode === 18) return 'AltLeft'
-  if (keyCode === 225) return 'AltRight'
-  if (keyCode === 8) return 'Backspace'
-  if (keyCode === 17) return 'Control'
-  if (keyCode === 46) return 'Delete'
-  if (keyCode >= 37 && keyCode <= 40) return keyName //Arrows
-  if (keyCode === 13) return 'Enter'
-  if (keyCode === 189) return 'Minus'
-  if (keyCode === 187) return 'Plus'
-  if (keyCode === 191) return 'Slash'
-  if (keyCode === 32) return 'Space'
-  if (keyCode === 16) return 'Shift'
-  return '' //If an unknown key is pressed, a string should be returned
-}
-
-export function buildKeyPressEvent(interpreter: Interpreter, keyCode: string): RuntimeObject {
-  return interpreter.list(
-    interpreter.reify('keypress'),
-    interpreter.reify(keyCode)
-  )
-}
-
-export interface VisualState {
-  image?: string;
-  position: Position;
-  message?: string;
-  text?: string;
-  textColor?: string;
-}
-export interface Position {
-  x: number;
-  y: number;
-}
 
 export interface Drawable {
   drawableImage?: DrawableImage;
@@ -126,44 +75,6 @@ export function moveAllTo(drawable: Drawable, position: Position): void {
 
 export function hexaToColor(textColor?: string): string | undefined { return !textColor ? undefined : '#' + textColor }
 
-export function visualState(interpreter: Interpreter, visual: RuntimeObject): VisualState {
-  const image = invokeMethod(interpreter, visual, 'image')
-  const text = invokeMethod(interpreter, visual, 'text')
-  const textColor = invokeMethod(interpreter, visual, 'textColor')
-  const position = interpreter.send('position', visual)!
-  const roundedPosition = interpreter.send('round', position)!
-  const x = roundedPosition.get('x')!.innerNumber!
-  const y = roundedPosition.get('y')!.innerNumber!
-  const message = visual.get('message')?.innerString
-  return { image, position: { x, y }, text, textColor, message }
-}
-
-export function flushEvents(interpreter: Interpreter, ms: number): void {
-  interpreter.send(
-    'flushEvents',
-    interpreter.object('wollok.gameMirror.gameMirror'),
-    interpreter.reify(ms),
-  )
-}
-
-export interface CanvasResolution {
-  width: number;
-  height: number;
-}
-
-export function canvasResolution(interpreter: Interpreter): CanvasResolution {
-  const game = interpreter.object('wollok.game.game')
-  const cellPixelSize = game.get('cellSize')!.innerNumber!
-  const width = round(game.get('width')!.innerNumber!) * cellPixelSize
-  const height = round(game.get('height')!.innerNumber!) * cellPixelSize
-  return { width, height }
-}
-
-export function queueEvent(interpreter: Interpreter, ...events: RuntimeObject[]): void {
-  const io = interpreter.object('wollok.io.io')
-  events.forEach(e => interpreter.send('queueEvent', io, e))
-}
-
 function canvasAspectRatio(gameWidth: number, gameHeight: number, parentWidth: number, parentHeight: number) {
   return min(parentWidth / gameWidth, parentHeight / gameHeight)
 }
@@ -178,7 +89,7 @@ export function resizeCanvas(gameWidth: number, gameHeight: number, rendered: Re
 }
 
 export function removeIfStartsWith(path: string, prefix: string): string {
-  if(path.startsWith(prefix)){
+  if (path.startsWith(prefix)) {
     return path.replace(prefix, '')
   }
 
@@ -190,123 +101,99 @@ export function removeIfStartsWith(path: string, prefix: string): string {
 // GAME CYCLE
 // ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-interface SketchProps {
-  gameProject: GameProject
-  evaluation: Evaluation
-  exit: () => void
-}
-
 interface StepAssets {
   sketch: p5
-  gameProject: GameProject
-  interpreter: Interpreter
-  sounds: Map<Id, GameSound>
+  game: Game
   images: Map<Id, p5.Image>
+  sounds: Map<Id, SoundFile>
+  currentSounds: Map<Id, GameSound>
   audioMuted: boolean
   gamePaused: boolean
 }
 
-interface SoundAssets {
-  gameProject: GameProject
-  interpreter: Interpreter
-  sounds: Map<Id, GameSound>
-  audioMuted?: boolean
-  gamePaused?: boolean
-}
-
 export function step(assets: StepAssets) {
-  const { sketch, gameProject, interpreter, sounds, images, audioMuted, gamePaused } = assets
+  const { sketch, game, sounds, currentSounds, images, audioMuted, gamePaused } = assets
 
-  if(!gamePaused) {
+  if (!gamePaused) {
     window.performance.mark('update-start')
-    flushEvents(interpreter, sketch.millis())
-    updateSound({ gameProject, interpreter, sounds, audioMuted })
+    game.flushEvents(sketch.millis())
+    updateSound(game, sounds, currentSounds, audioMuted)
     window.performance.mark('update-end')
     window.performance.mark('draw-start')
-    render(interpreter, sketch, images)
+    render(game, sketch, images)
     window.performance.mark('draw-end')
 
     window.performance.measure('update-start-to-end', 'update-start', 'update-end')
     window.performance.measure('draw-start-to-end', 'draw-start', 'draw-end')
   }
   else {
-    updateSound({ gameProject, interpreter, sounds, gamePaused })
+    updateSound(game, sounds, currentSounds, audioMuted)
   }
   return undefined
 }
 
-function updateSound(assets: SoundAssets) {
-  const { gameProject, interpreter, sounds, audioMuted, gamePaused } = assets
-  const soundInstances = gamePaused ? [] : interpreter.object('wollok.game.game').get('sounds')?.innerCollection ?? []
+export function updateSound(game: Game, sounds: Map<string, SoundFile>, currentSounds: Map<Id, GameSound>, audioMuted: boolean) {
+  const { soundStates } = game
 
-  for (const [id, sound] of sounds.entries()) {
-    if (!soundInstances.some(sound => sound.id === id)) {
+  for (const [id, sound] of currentSounds.entries()) {
+    if (!soundStates.some(sound => sound.id === id)) {
       sound.stopSound()
-      sounds.delete(id)
+      currentSounds.delete(id)
     } else {
       sound.playSound()
     }
   }
 
-  soundInstances.forEach(soundInstance => {
-    const soundState: SoundState = {
-      id: soundInstance.id,
-      file: soundInstance.get('file')!.innerString!,
-      status: soundInstance.get('status')!.innerString! as SoundStatus,
-      volume: audioMuted ? 0 : soundInstance.get('volume')!.innerNumber!,
-      loop: soundInstance.get('loop')!.innerBoolean!,
-    }
+  soundStates.forEach(soundState => {
+    if (audioMuted) soundState.volume = 0
 
-    let sound = sounds.get(soundState.id)
+    let sound = currentSounds.get(soundState.id)
     if (!sound) {
-      const soundPath = gameProject.sounds.find(({ possiblePaths }) => possiblePaths.includes(soundState.file))?.url
+      const soundPath = sounds.get(soundState.file)
       if (soundPath) { // TODO: add soundfile not found exception
         sound = new GameSound(soundState, soundPath)
-        sounds.set(soundState.id, sound)
+        currentSounds.set(soundState.id, sound)
       }
     }
-
     sound?.update(soundState)
   })
 }
 
-function render(interpreter: Interpreter, sketch: p5, images: Map<string, p5.Image>) {
-  const game = interpreter.object('wollok.game.game')
-  const cellPixelSize = game.get('cellSize')!.innerNumber!
-  const boardGroundPath = game.get('boardGround')?.innerString
+function render(game: Game, sketch: p5, images: Map<string, p5.Image>) {
+  const { cellSize, boardGround, ground, width, height, } = game.board
 
-  if (boardGroundPath) sketch.image(baseDrawable(images, boardGroundPath).drawableImage!.image, 0, 0, sketch.width, sketch.height)
+  if (boardGround) sketch.image(baseDrawable(images, boardGround).drawableImage!.image, 0, 0, sketch.width, sketch.height)
   else {
-    const groundImage = baseDrawable(images, game.get('ground')!.innerString!).drawableImage!.image
-    const gameWidth = round(game.get('width')!.innerNumber!)
-    const gameHeight = round(game.get('height')!.innerNumber!)
+    const groundImage = baseDrawable(images, ground).drawableImage!.image
+    const gameWidth = round(width)
+    const gameHeight = round(height)
 
     for (let x = 0; x < gameWidth; x++)
       for (let y = 0; y < gameHeight; y++)
-        sketch.image(groundImage, x * cellPixelSize, y * cellPixelSize, cellPixelSize, cellPixelSize)
+        sketch.image(groundImage, x * cellSize, y * cellSize, cellSize, cellSize)
   }
 
   const messagesToDraw: DrawableMessage[] = []
-  for (const visual of game.get('visuals')?.innerCollection ?? []) {
-    const { image: stateImage, position, message, text, textColor } = visualState(interpreter, visual)
+  for (const visual of game.visuals) {
+    const { image: stateImage, position, message, messageTime, text, textColor } = visual
     const drawable = stateImage === undefined ? {} : baseDrawable(images, stateImage)
-    let x = position.x * cellPixelSize
-    let y = sketch.height - (position.y + 1) * cellPixelSize
+    let x = position.x * cellSize
+    let y = sketch.height - (position.y + 1) * cellSize
 
     if (stateImage) {
-      x = position.x * cellPixelSize
-      y = sketch.height - position.y * cellPixelSize - drawable.drawableImage!.image.height
+      x = position.x * cellSize
+      y = sketch.height - position.y * cellSize - drawable.drawableImage!.image.height
       moveAllTo(drawable, { x, y })
     }
 
-    if (message && visual.get('messageTime')!.innerNumber! > sketch.millis())
+    if (message && messageTime > sketch.millis())
       messagesToDraw.push({ message, x, y })
 
     draw(sketch, drawable)
 
     if (text) {
-      x = (position.x + 0.5) * cellPixelSize
-      y = sketch.height - (position.y + 0.5) * cellPixelSize
+      x = (position.x + 0.5) * cellSize
+      y = sketch.height - (position.y + 0.5) * cellSize
       const drawableText = { text, position: { x, y }, color: hexaToColor(textColor) }
       write(sketch, drawableText)
     }

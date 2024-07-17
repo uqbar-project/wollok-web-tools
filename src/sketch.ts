@@ -1,42 +1,55 @@
-import p5 from "p5"
+import p5, { SoundFile } from "p5"
 import { Id } from "wollok-ts"
-import { Interpreter } from "wollok-ts/dist/interpreter/interpreter"
-import { DEFAULT_GAME_ASSETS_DIR, GameProject } from "./gameProject"
-import { GameSound } from "./GameSound"
-import { buildKeyPressEvent, canvasResolution, defaultImgs, queueEvent, resizeCanvas, step, wKeyCode } from "./render"
+import Game from "./game"
+import { MediaFile } from "./gameProject"
+import { GameSound } from "./gameSound"
+import { resizeCanvas } from "./render"
+import { DEFAULT_GAME_ASSETS_DIR, defaultImgs, wKeyCode } from "./utils"
 
-export default (project: GameProject, interpreter: Interpreter, canvasParent?: Element) => (p: p5) => {
+
+export default (game: Game, projectImages: MediaFile[], projectSounds: MediaFile[], canvasParent?: Element) => (p: p5) => {
     const images = new Map<string, p5.Image>()
-    const sounds = new Map<Id, GameSound>()
+    const sounds = new Map<Id, SoundFile>()
+    const currentSounds = new Map<Id, GameSound>()
+
     let stop = false
     let gamePaused = false
     let audioMuted = false
 
-    p.setup = () => {
-        const { width, height } = canvasResolution(interpreter)
-        const renderer = p.createCanvas(width, height)
-        if (canvasParent) renderer.parent(canvasParent)
-
-        defaultImgs.forEach(path => images.set(path, p.loadImage(DEFAULT_GAME_ASSETS_DIR + path)))
-
-        project.images.forEach(({ possiblePaths, url }) =>
+    p.preload = () => {
+        defaultImgs.forEach(path =>
+            images.set(path, p.loadImage(DEFAULT_GAME_ASSETS_DIR + path))
+        )
+        projectImages.forEach(({ possiblePaths, url }) =>
             possiblePaths.forEach(path =>
                 images.set(path, p.loadImage(url))
             )
         )
+        projectSounds.forEach(({ possiblePaths, url }) =>
+            possiblePaths.forEach(path =>
+                sounds.set(path, new SoundFile(url))
+            )
+        ) 
+    }
+
+    p.setup = () => {
+        const { width, height } = game.canvasResolution
+        const renderer = p.createCanvas(width, height)
+        if (canvasParent) renderer.parent(canvasParent)
         resizeCanvas(width, height, renderer, canvasParent)
     }
 
     p.draw = () => {
-        if (!interpreter.object('wollok.game.game').get('running')!.innerBoolean!) { stop = true }
-        else step({ sketch: p, gameProject: project, interpreter, sounds, images, audioMuted, gamePaused })
+        if (gamePaused) return;
+        if (!game.running) { stop = true }
+        else game.step(p, { images, sounds, currentSounds, audioMuted, gamePaused })
     }
 
 
     p.keyPressed = () => {
         if (!gamePaused) {
             window.performance.mark('key-start')
-            queueEvent(interpreter, buildKeyPressEvent(interpreter, wKeyCode(p.key, p.keyCode)), buildKeyPressEvent(interpreter, 'ANY'))
+            game.queueEvent(wKeyCode(p.key, p.keyCode), 'ANY')
             window.performance.mark('key-end')
             window.performance.measure('key-start-to-end', 'key-start', 'key-end')
         }
