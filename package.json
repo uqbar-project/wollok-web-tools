@@ -1,6 +1,6 @@
 {
   "name": "wollok-game-web",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "description": "Wollok Game library for browsers",
   "main": "dist/index.js",
   "repository": "https://github.com/uqbar-project/wollok-game-web",
@@ -8,8 +8,9 @@
   "license": "GPL-3.0",
   "scripts": {
     "test": "http-server -o test",
-    "build": "rimraf dist && tsc -p ./tsconfig.build.json && webpack watch --mode development",
-    "prepublishOnly": "webpack --mode production"
+    "build:lib": "rimraf dist && tsc -p ./tsconfig.build.json",
+    "watch": "npm run build:lib && webpack watch --mode development",
+    "prepublishOnly": "npm run build:lib && webpack --mode production"
   },
   "dependencies": {
     "p5": "^1.4.1",
