@@ -2,12 +2,12 @@
   "compilerOptions": {
     "target": "es5",
     "module": "es2015",
-    // "baseUrl": "./src",
     "outDir": "./dist",
     "sourceMap": true,
     "declaration": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
+    "allowJs": true,
     "resolveJsonModule": true,
     "downlevelIteration": true,
     "moduleResolution": "node",
@@ -18,6 +18,6 @@
     ]
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*"
   ],
 }

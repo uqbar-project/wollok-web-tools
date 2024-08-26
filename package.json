@@ -1,28 +1,31 @@
 {
-  "name": "wollok-game-web",
+  "name": "wollok-web-tools",
   "version": "1.1.0",
-  "description": "Wollok Game library for browsers",
+  "description": "Wollok library for browsers",
   "main": "dist/index.js",
-  "repository": "https://github.com/uqbar-project/wollok-game-web",
+  "repository": "https://github.com/uqbar-project/wollok-web-tools",
   "author": "Uqbar",
   "license": "GPL-3.0",
   "scripts": {
-    "test": "http-server -o test",
-    "build:lib": "rimraf dist && tsc -p ./tsconfig.build.json",
+    "test": "http-server -o test/game",
+    "build:lib": "rimraf ./dist && tsc -p ./tsconfig.build.json && cd src && find . -name '*.css' | cpio -pdm ../dist",
     "watch": "npm run build:lib && webpack watch --mode development",
     "prepublishOnly": "npm run build:lib && webpack --mode production"
   },
   "dependencies": {
+    "@types/cytoscape": "^3.21.7",
+    "cytoscape": "^3.30.2",
     "p5": "^1.4.1",
     "path": "^0.12.7",
     "socket.io": "^4.7.5",
-    "wollok-ts": "4.1.3"
+    "wollok-ts": "file:../wollok-ts"
   },
   "devDependencies": {
     "@types/p5": "^1.4.0",
     "clean-webpack-plugin": "^4.0.0",
     "http-server": "^14.1.0",
     "rimraf": "^6.0.1",
+    "shx": "^0.3.4",
     "ts-loader": "^9.2.6",
     "typescript": "^4.5.5",
     "webpack": "^5.69.1",
