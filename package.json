@@ -16,7 +16,7 @@
     "p5": "^1.4.1",
     "path": "^0.12.7",
     "socket.io": "^4.7.5",
-    "wollok-ts": "4.1.3"
+    "wollok-ts": "4.1.4"
   },
   "devDependencies": {
     "@types/p5": "^1.4.0",
