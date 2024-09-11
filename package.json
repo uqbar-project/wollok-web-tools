@@ -1,9 +1,9 @@
 {
-  "name": "wollok-game-web",
-  "version": "1.1.0",
+  "name": "wollok-web-tools",
+  "version": "1.1.1",
   "description": "Wollok Game library for browsers",
   "main": "dist/index.js",
-  "repository": "https://github.com/uqbar-project/wollok-game-web",
+  "repository": "https://github.com/uqbar-project/wollok-web-tools",
   "author": "Uqbar",
   "license": "GPL-3.0",
   "scripts": {
