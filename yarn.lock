@@ -1692,10 +1692,10 @@ wildcard@^2.0.0:
   resolved "https://registry.npmjs.org/wildcard/-/wildcard-2.0.0.tgz"
   integrity sha512-JcKqAHLPxcdb9KM49dufGXn2x3ssnfjbcaQdLlfZsL9rH9wgDQjUtDxbo8NE0F6SFvydeu1VhZe7hZuHsB2/pw==
 
-wollok-ts@4.1.4:
-  version "4.1.4"
-  resolved "https://registry.npmjs.org/wollok-ts/-/wollok-ts-4.1.4.tgz"
-  integrity sha512-t57+u0AOFJFMv7cMdmrlgCROhry8D5mxprR70KI2vCPdQZlb+PhQRlChJloBHdkaqPS3NVVSixdn38KqzsURkQ==
+wollok-ts@4.1.5:
+  version "4.1.5"
+  resolved "https://registry.npmjs.org/wollok-ts/-/wollok-ts-4.1.5.tgz"
+  integrity sha512-FmGe0vod2XXR11cqbOd9VqJjveGlfnVi+iEyjgG0l3RadaSVJCEEHuQRmMMLq7aESILEfYiv/4lTTuEjD8kL6w==
   dependencies:
     "@types/parsimmon" "^1.10.8"
     parsimmon "^1.18.1"
