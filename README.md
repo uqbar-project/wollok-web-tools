@@ -17,11 +17,16 @@ npm install  # or npm i
 
 ## 🚀 How to publish this package
 
-Simply run
+- Make sure you have the latest version set in `package.json`
+- Also take some time and explain the changes in the `CHANGELOG.md` file
+- It's always good to tag the current `main` branch into a tag (TODO)
+- Then simply run
 
 ```bash
 npm publish
 ```
+
+You'll need a npm user with publishing permissions.
 
 ## 👩‍💻 Contributing
 
