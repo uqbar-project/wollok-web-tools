@@ -3,7 +3,7 @@ import { Id } from 'wollok-ts'
 import Game from './game'
 import { GameSound } from './gameSound'
 import { DrawableMessage, TEXT_SIZE, TEXT_STYLE, drawMessage } from './messages'
-import { Position } from './utils'
+import { hexaToColor, Position } from './utils'
 
 const { round, min } = Math
 
@@ -73,13 +73,11 @@ export function moveAllTo(drawable: Drawable, position: Position): void {
   if (drawableText) { drawableText.position = position }
 }
 
-export function hexaToColor(textColor?: string): string | undefined { return !textColor ? undefined : '#' + textColor }
-
 function canvasAspectRatio(gameWidth: number, gameHeight: number, parentWidth: number, parentHeight: number) {
   return min(parentWidth / gameWidth, parentHeight / gameHeight)
 }
 
-export function resizeCanvas(gameWidth: number, gameHeight: number, rendered: Renderer, canvasParent?: Element) {
+export function resizeCanvas(gameWidth: number, gameHeight: number, rendered: Renderer, canvasParent?: Element): void {
   const parentWidth = canvasParent?.clientWidth || window.innerWidth
   const parentHeight = canvasParent?.clientHeight || window.innerHeight
   const ratio = canvasAspectRatio(gameWidth, gameHeight, parentWidth, parentHeight)
@@ -111,7 +109,7 @@ interface StepAssets {
   gamePaused: boolean
 }
 
-export function step(assets: StepAssets) {
+export function step(assets: StepAssets): void {
   const { sketch, game, sounds, currentSounds, images, audioMuted, gamePaused } = assets
 
   if (!gamePaused) {
@@ -129,10 +127,9 @@ export function step(assets: StepAssets) {
   else {
     updateSound(game, sounds, currentSounds, audioMuted)
   }
-  return undefined
 }
 
-export function updateSound(game: Game, sounds: Map<string, SoundFile>, currentSounds: Map<Id, GameSound>, audioMuted: boolean) {
+export function updateSound(game: Game, sounds: Map<string, SoundFile>, currentSounds: Map<Id, GameSound>, audioMuted: boolean): void {
   const { soundStates } = game
 
   for (const [id, sound] of currentSounds.entries()) {
@@ -160,7 +157,7 @@ export function updateSound(game: Game, sounds: Map<string, SoundFile>, currentS
 }
 
 function render(game: Game, sketch: p5, images: Map<string, p5.Image>) {
-  const { cellSize, boardGround, ground, width, height, } = game.board
+  const { cellSize, boardGround, ground, width, height } = game.board
 
   if (boardGround) sketch.image(baseDrawable(images, boardGround).drawableImage!.image, 0, 0, sketch.width, sketch.height)
   else {

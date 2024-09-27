@@ -1,10 +1,7 @@
-import { Environment, Node, Package, Program } from 'wollok-ts'
+import { Environment, Node, Package, Program, PROGRAM_FILE_EXTENSION, WOLLOK_FILE_EXTENSION } from 'wollok-ts'
 import { VALID_IMAGE_EXTENSIONS, VALID_SOUND_EXTENSIONS } from './utils'
 
-// TODO: Move to more general place
-const WOLLOK_FILE_EXTENSION = 'wlk'
-const WOLLOK_PROGRAM_EXTENSION = 'wpgm'
-const EXPECTED_WOLLOK_EXTENSIONS = [WOLLOK_FILE_EXTENSION, WOLLOK_PROGRAM_EXTENSION]
+const EXPECTED_WOLLOK_EXTENSIONS = [WOLLOK_FILE_EXTENSION, PROGRAM_FILE_EXTENSION]
 
 export interface File {
   name: string
@@ -59,11 +56,11 @@ export const buildGameProject = (allFiles: File[], programName?: string): GamePr
   if(programName)
     wpgmFile = wollokFiles.find(file => file.name === programName)
   else
-    wpgmFiles = wollokFiles.filter(withExtension(WOLLOK_PROGRAM_EXTENSION))
+    wpgmFiles = wollokFiles.filter(withExtension(PROGRAM_FILE_EXTENSION))
   if (wpgmFiles.length > 1) throw new MultiProgramException('This project has more than one program', wpgmFiles, allFiles)
   if (wpgmFiles.length === 1) wpgmFile = wpgmFiles[0]
   if (!wpgmFile) throw new NoProgramException('Program file not found')
-  const main = wpgmFile.name.replace(`.${WOLLOK_PROGRAM_EXTENSION}`, '').replace(/\//gi, '.')
+  const main = wpgmFile.name.replace(`.${PROGRAM_FILE_EXTENSION}`, '').replace(/\//gi, '.')
   const description = allFiles.find(isREADME())?.content.toString('utf8') || '## No description found'
   const images = getMediaFiles(allFiles, VALID_IMAGE_EXTENSIONS, 'image/png')
   const sounds = getMediaFiles(allFiles, VALID_SOUND_EXTENSIONS, 'audio/mp3')
@@ -82,7 +79,7 @@ function getMediaFiles(allFiles: File[], validExtensions: string[], type: string
   ))
 }
 
-export function filesWithExtension(files: File[], validExtensions: string[]) {
+export function filesWithExtension(files: File[], validExtensions: string[]): File[] {
   return files.filter(withExtension(...validExtensions))
 }
 

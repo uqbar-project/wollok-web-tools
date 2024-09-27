@@ -19,5 +19,5 @@
   },
   "include": [
     "src/**/*.ts"
-  ],
+, "src/dynamicDiagram/diagram-client.ts"  ],
 }

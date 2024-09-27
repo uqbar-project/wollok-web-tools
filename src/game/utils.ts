@@ -66,7 +66,6 @@ export interface Resolution {
   height: number;
 }
 
-
 export function hexaToColor(textColor?: string): string | undefined { return !textColor ? undefined : '#' + textColor }
 
 export function visualState(interpreter: Interpreter, visual: RuntimeObject): VisualState {
