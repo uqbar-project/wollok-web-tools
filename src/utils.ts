@@ -129,7 +129,7 @@ export interface SoundState {
   loop: boolean;
 }
 
-export function soundState(soundInstance: RuntimeObject) {
+export function soundState(soundInstance: RuntimeObject): SoundState {
   return {
     id: soundInstance.id,
     file: soundInstance.get('file')!.innerString!,

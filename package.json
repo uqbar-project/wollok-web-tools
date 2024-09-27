@@ -19,11 +19,12 @@
     "wollok-ts": "4.1.6"
   },
   "devDependencies": {
+    "@stylistic/eslint-plugin-ts": "^2.8.0",
     "@types/p5": "^1.4.0",
     "@typescript-eslint/eslint-plugin": "^8.7.0",
     "@typescript-eslint/parser": "^8.7.0",
     "clean-webpack-plugin": "^4.0.0",
-    "eslint": "^9.11.1",
+    "eslint": "^8.57.1",
     "http-server": "^14.1.0",
     "rimraf": "^6.0.1",
     "ts-loader": "^9.5.1",
