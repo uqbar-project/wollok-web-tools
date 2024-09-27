@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import cytoscape from 'cytoscape'
-
 let cy
 let currentElements = []
 
-function initializeCytoscape(container: HTMLInputElement) {
+function initializeCytoscape(container) {
   const fontFace = {
     'font-family': 'Inter',
     'font-weight': 'normal',
@@ -133,7 +130,7 @@ function objectsPositionChanged() {
 }
 
 function objectsKeepTheirPosition() {
-  return getInputElement('toggle-pin').checked
+  return document.getElementById('toggle-pin').checked
 }
 
 function reloadDiagram(elements) {
@@ -167,11 +164,10 @@ function readyForLayoutElems(elements) {
 }
 
 function modeChanged() {
-  const toggleMode = getInputElement('toggle-mode')
+  const toggleMode = document.getElementById('toggle-mode')
   const newTitle = toggleMode.checked ? 'Dark mode ON' : 'Light Mode ON'
   toggleMode.setAttribute('title', newTitle)
 
-  // @ts-expect-error it actually works and we need to change the background color
   document.getElementById('main').style = `background-color: ${backgroundColor()}`
   cy.elements().remove()
   reloadDiagram(currentElements)
@@ -182,13 +178,9 @@ function backgroundColor() {
 }
 
 function isDarkMode() {
-  return getInputElement('toggle-mode').checked
+  return document.getElementById('toggle-mode').checked
 }
 
 function changeElementsMode() {
   currentElements.forEach(element => { element.data.mode = isDarkMode() ? 'dark' : 'light' })
-}
-
-function getInputElement(id: string) {
-  return document.getElementById(id) as HTMLInputElement
 }
