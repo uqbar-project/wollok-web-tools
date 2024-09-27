@@ -1,7 +1,7 @@
 {
   "name": "wollok-web-tools",
   "version": "1.1.4",
-  "description": "Wollok Game library for browsers",
+  "description": "Wollok Web Tools library for web development",
   "main": "dist/index.js",
   "repository": "https://github.com/uqbar-project/wollok-web-tools",
   "author": "Uqbar",
@@ -13,19 +13,22 @@
     "prepublishOnly": "npm run build:lib && webpack --mode production"
   },
   "dependencies": {
-    "p5": "^1.4.1",
+    "p5": "^1.11.0",
     "path": "^0.12.7",
-    "socket.io": "^4.7.5",
+    "socket.io": "^4.8.0",
     "wollok-ts": "4.1.6"
   },
   "devDependencies": {
     "@types/p5": "^1.4.0",
+    "@typescript-eslint/eslint-plugin": "^8.7.0",
+    "@typescript-eslint/parser": "^8.7.0",
     "clean-webpack-plugin": "^4.0.0",
+    "eslint": "^9.11.1",
     "http-server": "^14.1.0",
     "rimraf": "^6.0.1",
-    "ts-loader": "^9.2.6",
-    "typescript": "^4.5.5",
-    "webpack": "^5.69.1",
-    "webpack-cli": "^4.9.2"
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.6.2",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4"
   }
 }
