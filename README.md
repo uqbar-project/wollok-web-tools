@@ -9,7 +9,7 @@ Web tools for Wollok programming language, such as
 
 It will contain both client & server dependencies.
 
-## Installing it locally
+## 💻 Installing it locally
 
 ```bash
 npm install  # or npm i
