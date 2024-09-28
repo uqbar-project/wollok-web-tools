@@ -1,11 +1,12 @@
 import { ElementDefinition } from 'cytoscape'
-import { DynamicDiagramElement, DynamicDiagramNode, DynamicDiagramReference, getDynamicDiagramData, Interpreter, LIST_MODULE, Package, SET_MODULE } from 'wollok-ts'
+import { DynamicDiagramElement, DynamicDiagramNode, DynamicDiagramReference, LIST_MODULE, SET_MODULE } from 'wollok-ts'
 
-export const getDataDiagram = (interpreter: Interpreter, rootFQN?: Package): ElementDefinition[] =>
-  getDynamicDiagramData(interpreter, rootFQN)
+export const getDataDiagram = (objects: DynamicDiagramElement[]): ElementDefinition[] => {
+  return objects
     .map((dynamicDiagramElement: DynamicDiagramElement) =>
       dynamicDiagramElement.elementType === 'node' ? convertToCytoscapeNode(dynamicDiagramElement as DynamicDiagramNode) : convertToCytoscapeReference(dynamicDiagramElement as DynamicDiagramReference)
     )
+}
 
 const convertToCytoscapeNode = ({ id, type, label }: DynamicDiagramNode): ElementDefinition => ({
   data: {
