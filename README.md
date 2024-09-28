@@ -1,6 +1,6 @@
 # Wollok Web Tools
 
-[![npm version](https://badge.fury.io/js/wollok-web-tools.svg)](https://badge.fury.io/js/wollok-web-tools) [![Node.js CI](https://github.com/uqbar-project/wollok-mobile/actions/workflows/node.js.yml/badge.svg)](https://github.com/uqbar-project/wollok-mobile/actions/workflows/node.js.yml) ![GitHub License](https://img.shields.io/github/license/uqbar-project/wollok-web-tools)
+[![npm version](https://badge.fury.io/js/wollok-web-tools.svg)](https://badge.fury.io/js/wollok-web-tools) [![Node.js CI](https://github.com/uqbar-project/wollok-web-tools/actions/workflows/node.js.yml/badge.svg)](https://github.com/uqbar-project/wollok-web-tools/actions/workflows/node.js.yml) ![GitHub License](https://img.shields.io/github/license/uqbar-project/wollok-web-tools)
 
 Web tools for Wollok programming language, such as
 
