@@ -3,6 +3,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   entry: {
+    main: './src/index.ts',
     game:'./src/game/game-index.ts',
     dynamicDiagram: './src/dynamicDiagram/diagram-index.ts',
   },
