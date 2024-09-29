@@ -23,10 +23,10 @@ jobs:
       with:
         node-version: "${{ steps.nvm.outputs.NVMRC }}"
     - run: npm ci
-    - run: npm run lint && npm run build:lib
+    - run: npm run lint && npm test && npm run build:lib
     # - name: Upload coverage reports to Codecov
     #   uses: codecov/codecov-action@v4.0.1
     #   with:
     #     token: ${{ secrets.CODECOV_TOKEN }}
-    #     slug: uqbar-project/wollok-ts
-    #   continue-on-error: true        
+    #     slug: uqbar-project/wollok-web-tools
+    #   continue-on-error: true
