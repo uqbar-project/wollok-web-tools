@@ -92,31 +92,29 @@ describe('Dynamic diagram', () => {
         .and.to.connect('bird', 'bobbyTheShark', 'Bird')
     })
 
-    // All these test will fail unless we change isLocalVariable function in wollok-ts
-    // interpreter.evaluation.environment.getNodeOrUndefinedByFQN(it)?.is(Variable) })
-    // should change to
-    // interpreter.evaluation.environment.getNodeOrUndefinedByFQN(it)?.kind === 'Variable' })
-    // because of esm vs. commonJS
+    it('should include the REPL object', () => {
+      interprete(interpreter, 'var x')
+      objects = getDynamicDiagramData(interpreter)
+      getDataDiagram(objects).should.include.nodeWith({ label: 'REPL', type: 'REPL' })
+    })
 
-    // it('should include the REPL object', () => {
-    //   interprete(interpreter, 'var x')
-    //   getDataDiagram(objects).should.include.nodeWith({ label: 'REPL', type: 'REPL' })
-    // })
+    it('should include edges between REPL and WKOs', () => {
+      interprete(interpreter, 'var x')
+      objects = getDynamicDiagramData(interpreter)
+      getDataDiagram(objects).should.connect('x', 'REPL', 'null', 1.5)
+    })
 
-    // it('should include edges between REPL and WKOs', () => {
-    //   interprete(interpreter, 'var x')
-    //   getDataDiagram(objects).should.connect('x', 'REPL', 'null', 1.5)
-    // })
+    it('should include constant edges between REPL and WKOs', () => {
+      interprete(interpreter, 'const x = 7')
+      objects = getDynamicDiagramData(interpreter)
+      getDataDiagram(objects).should.connect('x🔒', 'REPL', '7', 1.5)
+    })
 
-    // it('should include constant edges between REPL and WKOs', () => {
-    //   interprete(interpreter, 'const x = 7')
-    //   getDataDiagram(objects).should.connect('x🔒', 'REPL', '7', 1.5)
-    // })
-
-    // it('should have a specific type for null object', () => {
-    //   interprete(interpreter, 'var x')
-    //   getDataDiagram(objects).should.include.nodeWith({ label: 'null', type: 'null' })
-    // })
+    it('should have a specific type for null object', () => {
+      interprete(interpreter, 'var x')
+      objects = getDynamicDiagramData(interpreter)
+      getDataDiagram(objects).should.include.nodeWith({ label: 'null', type: 'null' })
+    })
 
     it('should include lists and their elements', () => {
       getDataDiagram(objects).should
@@ -181,4 +179,5 @@ describe('Dynamic diagram', () => {
     })
 
   })
+
 })

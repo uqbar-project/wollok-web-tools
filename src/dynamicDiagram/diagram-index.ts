@@ -135,15 +135,26 @@ function objectsKeepTheirPosition() {
   return getInputElement('toggle-pin').checked
 }
 
-function reloadDiagram(elements) {
-  currentElements = [...elements]
+function identifier(element) {
+  return `${element.data.id}|${element.data.label}`
+}
+
+function reloadDiagram(newElements) {
+  const oldElements = [...currentElements]
+  currentElements = [...newElements]
+
   changeElementsMode()
-  const ids = elements.map((element) => element.data.id)
-  cy.filter((element) => !ids.includes(element.id())).remove()
-  const newElements = elements.filter((element) => !cy.hasElementWithId(element.data.id))
-  if (newElements.length) {
+  const oldIds = oldElements.map((oldElement) => identifier(oldElement))
+  const newIds = newElements.map((element) => identifier(element))
+
+  const elementsToRemove = oldElements.filter((oldElement) => !newIds.includes(identifier(oldElement)))
+  const idsToRemove = elementsToRemove.map((element) => element.data.id)
+  cy.filter((element) => idsToRemove.includes(element.id())).remove()
+
+  const elementsToAdd = newElements.filter((element) => !oldIds.includes(identifier(element)))
+  if (elementsToAdd.length) {
     const shouldUpdateLayout = !objectsKeepTheirPosition() || cy.elements().length === 0
-    const addedNodes = cy.add(newElements)
+    const addedNodes = cy.add(elementsToAdd)
     if (shouldUpdateLayout) {
       updateLayout()
     } else {
