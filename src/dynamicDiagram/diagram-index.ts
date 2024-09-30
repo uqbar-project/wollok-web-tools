@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-let cy
-let currentElements = []
+let cy: any
+let currentElements: any[] = []
 
 function initializeCytoscape(container) {
   const fontFace = {
@@ -36,22 +36,23 @@ function initializeCytoscape(container) {
     'font-size': '8px',
   }
 
-  // @ts-expect-error it's a page
+  // @ts-ignore
   cy = cytoscape({
     container,
     zoom: 1,
     maxZoom: 2,
     minZoom: 0.5,
     elements: [],
-
     style: [
       // the stylesheet for the graph
       {
         selector: 'node',
+        // @ts-ignore
         style: nodeStyle,
       },
       {
         selector: 'node[mode = "dark"]',
+        // @ts-ignore
         style: {
           ...nodeStyle,
           'line-color': '#000000',
@@ -62,10 +63,12 @@ function initializeCytoscape(container) {
       },
       {
         selector: 'edge',
+        // @ts-ignore
         style: edgeStyle,
       },
       {
         selector: 'edge[mode = "dark"]',
+        // @ts-ignore
         style: {
           ...edgeStyle,
           'line-color': '#FFFFFF',
@@ -75,6 +78,7 @@ function initializeCytoscape(container) {
       },
       {
         selector: 'node[type = "literal"]',
+        // @ts-ignore
         style: {
           ...fontFace,
           'background-color': '#6fdc4b',
@@ -83,6 +87,7 @@ function initializeCytoscape(container) {
       },
       {
         selector: 'node[type = "literal"][mode = "dark"]',
+        // @ts-ignore
         style: {
           ...fontFace,
           'background-color': '#BB2525',
@@ -128,7 +133,7 @@ function updateNodes(elements) {
 
 function objectsPositionChanged() {
   const newTitle = objectsKeepTheirPosition() ? 'ON -> objects will keep their positions (better performance when you have > 100 objects)' : 'OFF -> objects will be relocated to fit into the graph layout (graph is easier to read)'
-  document.getElementById('toggle-pin').setAttribute('title', `Fix objects position: ${newTitle}`)
+  document.getElementById('toggle-pin')!.setAttribute('title', `Fix objects position: ${newTitle}`)
 }
 
 function objectsKeepTheirPosition() {
