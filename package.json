@@ -9,9 +9,9 @@
   "scripts": {
     "test": "TS_NODE_PROJECT='./tsconfig.test.json' mocha --parallel -r ts-node/register/transpile-only test/**/*.spec.ts",
     "test:game": "http-server -o ./game/test",
-    "build:lib": "rimraf dist && tsc -p ./tsconfig.build.json",
     "watch": "npm run build:lib && webpack watch --mode development",
-    "prepublishOnly": "npm run build:lib && webpack --mode production",
+    "build:lib": "rimraf dist && tsc -p ./tsconfig.build.json",
+    "build": "npm run build:lib && webpack --mode production",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
