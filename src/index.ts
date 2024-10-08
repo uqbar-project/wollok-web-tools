@@ -1,14 +1,7 @@
-declare global {
-    interface Window {
-        LocalGame: typeof LocalGame
-        SocketGame: typeof SocketGame
-    }
-}
+// Module Dependencies
 
-import p5 from "p5"
-global.p5 = p5
-require('p5/lib/addons/p5.sound')
+// Dynamic Diagram
+export * from './dynamicDiagram/diagram-generator'
 
-import { LocalGame, SocketGame } from "./game"
-window.LocalGame = LocalGame
-window.SocketGame = SocketGame
+// Game
+export * from './game/utils'

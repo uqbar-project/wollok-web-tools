@@ -66,7 +66,6 @@ export interface Resolution {
   height: number;
 }
 
-
 export function hexaToColor(textColor?: string): string | undefined { return !textColor ? undefined : '#' + textColor }
 
 export function visualState(interpreter: Interpreter, visual: RuntimeObject): VisualState {
@@ -129,7 +128,7 @@ export interface SoundState {
   loop: boolean;
 }
 
-export function soundState(soundInstance: RuntimeObject) {
+export function soundState(soundInstance: RuntimeObject): SoundState {
   return {
     id: soundInstance.id,
     file: soundInstance.get('file')!.innerString!,

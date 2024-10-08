@@ -2,7 +2,10 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.ts',
+  entry: {
+    game:'./src/game/game-index.ts',
+    dynamicDiagram: './src/dynamicDiagram/diagram-index.ts',
+  },
   module: {
     rules: [
       {
@@ -22,10 +25,10 @@ module.exports = {
     })
   ],
   optimization: {
-    minimize: false
+    minimize: true
   },
   output: {
-    filename: 'index.js',
+    filename: '[name]-index.js',
     path: path.resolve(__dirname, 'dist', 'web'),
   },
   watchOptions: {
