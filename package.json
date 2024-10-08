@@ -8,7 +8,7 @@
   "license": "GPL-3.0",
   "scripts": {
     "test": "TS_NODE_PROJECT='./tsconfig.test.json' mocha --parallel -r ts-node/register/transpile-only test/**/*.spec.ts",
-    "test:game": "http-server -o ./game/test",
+    "test:game": "http-server -o ./test/game",
     "watch": "npm run build:lib && webpack watch --mode development",
     "build:lib": "rimraf dist && tsc -p ./tsconfig.build.json",
     "build": "npm run build:lib && webpack --mode production",
@@ -20,7 +20,7 @@
     "p5": "^1.11.0",
     "path": "^0.12.7",
     "socket.io": "^4.8.0",
-    "wollok-ts": "^4.1.7"
+    "wollok-ts": "4.1.8"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin-ts": "^2.8.0",
