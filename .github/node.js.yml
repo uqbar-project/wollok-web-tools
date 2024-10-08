@@ -23,7 +23,7 @@ jobs:
       with:
         node-version: "${{ steps.nvm.outputs.NVMRC }}"
     - run: npm ci
-    - run: npm run lint && npm test && npm run build:lib
+    - run: npm run lint && npm test && npm run build
     # - name: Upload coverage reports to Codecov
     #   uses: codecov/codecov-action@v4.0.1
     #   with:

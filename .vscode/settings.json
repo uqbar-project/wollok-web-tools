@@ -11,5 +11,6 @@
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.tsdk": "node_modules/typescript/lib",
   "eslint.enable": true,
-  "npm.packageManager": "npm"
+  "npm.packageManager": "npm",
+  "typescript.tsserver.experimental.useVsCodeWatcher": false
 }

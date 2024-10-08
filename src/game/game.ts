@@ -13,7 +13,6 @@ interface GameState {
   images: Map<string, p5.Image>
   sounds: Map<Id, p5.SoundFile>
   currentSounds: Map<Id, GameSound>
-  // stop: boolean
   gamePaused: boolean
   audioMuted: boolean
 }
