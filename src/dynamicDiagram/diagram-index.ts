@@ -181,6 +181,13 @@ function readyForLayoutElems(elements) {
   )
 }
 
+function recreateDiagram(currentElements) {
+  changeElementsMode()
+  cy.elements().remove()
+  cy.add(currentElements)
+  updateLayout()
+}
+
 function modeChanged() {
   const toggleMode = getInputElement('toggle-mode')
   const newTitle = toggleMode.checked ? 'Dark mode ON' : 'Light Mode ON'
@@ -188,8 +195,7 @@ function modeChanged() {
 
   // @ts-expect-error it works and we need it
   document.getElementById('main').style = `background-color: ${backgroundColor()}`
-  cy.elements().remove()
-  reloadDiagram(currentElements)
+  recreateDiagram([...currentElements])
 }
 
 function backgroundColor() {
