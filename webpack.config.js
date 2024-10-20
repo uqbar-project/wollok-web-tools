@@ -16,7 +16,7 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
-    fallback: { "console": false }
+    fallback: { 'console': false }
   },
   plugins: [
     new CleanWebpackPlugin({
@@ -32,6 +32,6 @@ module.exports = {
     path: path.resolve(__dirname, 'dist', 'web'),
   },
   watchOptions: {
-    ignored: "/node_modules/",
+    ignored: '/node_modules/',
   },
 };
