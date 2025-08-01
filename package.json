@@ -11,12 +11,14 @@
     "test:game": "http-server -o ./test/game",
     "watch": "npm run build:lib && webpack watch --mode development",
     "build:lib": "rimraf dist && tsc -p ./tsconfig.build.json",
+    "build:lib:esm": "rimraf dist && tsc",
     "build": "npm run build:lib && webpack --mode production",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "cytoscape": "^3.30.2",
+    "howler": "^2.2.4",
     "p5": "^1.11.0",
     "path": "^0.12.7",
     "socket.io": "^4.8.0",
@@ -25,6 +27,7 @@
   "devDependencies": {
     "@stylistic/eslint-plugin-ts": "^2.8.0",
     "@types/chai": "^4.3.6",
+    "@types/howler": "^2.2.12",
     "@types/mocha": "^10.0.8",
     "@types/p5": "^1.4.0",
     "@types/sinon": "^17.0.3",

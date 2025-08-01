@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "es2015",
+    "target": "es2020",
+    "module": "es2020",
     // "baseUrl": "./src",
     "outDir": "./dist",
     "sourceMap": true,
@@ -11,13 +11,7 @@
     "resolveJsonModule": true,
     "downlevelIteration": true,
     "moduleResolution": "node",
-    "lib": [
-      "es2016",
-      "dom",
-      "es5"
-    ]
+    "lib": ["es2016", "dom", "es5"]
   },
-  "include": [
-    "src/**/*.ts"
-  ],
+  "include": ["src/**/*.ts"]
 }

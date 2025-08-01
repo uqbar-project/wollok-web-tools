@@ -11,7 +11,7 @@ const { round } = Math
 
 interface GameState {
   images: Map<string, p5.Image>
-  sounds: Map<Id, p5.SoundFile>
+  sounds: Map<Id, Howl>
   currentSounds: Map<Id, GameSound>
   gamePaused: boolean
   audioMuted: boolean

@@ -1,4 +1,5 @@
-import p5, { SoundFile } from 'p5'
+import { Howl } from 'howler'
+import p5 from 'p5'
 import { Id } from 'wollok-ts'
 import Game from './game'
 import { MediaFile } from './gameProject'
@@ -6,10 +7,9 @@ import { GameSound } from './gameSound'
 import { resizeCanvas } from './render'
 import { DEFAULT_GAME_ASSETS_DIR, defaultImgs, wKeyCode } from './utils'
 
-
 export default (game: Game, projectImages: MediaFile[], projectSounds: MediaFile[], canvasParent?: Element) => (p: p5): void => {
   const images = new Map<string, p5.Image>()
-  const sounds = new Map<Id, SoundFile>()
+  const sounds = new Map<Id, Howl>()
   const currentSounds = new Map<Id, GameSound>()
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -22,14 +22,17 @@ export default (game: Game, projectImages: MediaFile[], projectSounds: MediaFile
       images.set(path, p.loadImage(DEFAULT_GAME_ASSETS_DIR + path))
     )
     projectImages.forEach(({ possiblePaths, url }) =>
+    {
+      const image = p.loadImage(url)
       possiblePaths.forEach(path =>
-        images.set(path, p.loadImage(url))
+        images.set(path, image)
       )
-    )
+    })
     projectSounds.forEach(({ possiblePaths, url }) =>
-      possiblePaths.forEach(path =>
-        sounds.set(path, new SoundFile(url))
-      )
+    { const sound = new Howl({ src: [url] })
+      possiblePaths.forEach(path => {
+        sounds.set(path, sound)
+      }) }
     )
   }
 

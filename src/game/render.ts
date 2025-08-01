@@ -103,7 +103,7 @@ interface StepAssets {
   sketch: p5
   game: Game
   images: Map<Id, p5.Image>
-  sounds: Map<Id, SoundFile>
+  sounds: Map<Id, Howl>
   currentSounds: Map<Id, GameSound>
   audioMuted: boolean
   gamePaused: boolean
@@ -129,7 +129,7 @@ export function step(assets: StepAssets): void {
   }
 }
 
-export function updateSound(game: Game, sounds: Map<string, SoundFile>, currentSounds: Map<Id, GameSound>, audioMuted: boolean): void {
+export function updateSound(game: Game, sounds: Map<string, Howl>, currentSounds: Map<Id, GameSound>, audioMuted: boolean): void {
   const { soundStates } = game
 
   for (const [id, sound] of currentSounds.entries()) {
