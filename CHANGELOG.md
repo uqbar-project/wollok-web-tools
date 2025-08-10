@@ -1,6 +1,10 @@
 
 # Changelog
 
+## v1.1.8
+**Wollok TS Version: `4.2.3`**
+- ⬆️ Upgrading Wollok TS version
+
 ## v1.1.5
 **Wollok TS Version: `4.1.8`**
 - 🐛 Fix dynamic diagram when mode changes
