@@ -1,6 +1,10 @@
 
 # Changelog
 
+## v1.1.9
+**Wollok TS Version: `4.2.3`**
+- ⬆️ Upgrading Wollok TS version
+
 ## v1.1.8
 **Wollok TS Version: `4.2.3`**
 - ⬆️ Upgrading Wollok TS version
