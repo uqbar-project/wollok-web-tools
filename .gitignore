@@ -22,4 +22,4 @@ node_modules/
 dist/
 
 # Others
-.DS_Store/
+.DS_Store
