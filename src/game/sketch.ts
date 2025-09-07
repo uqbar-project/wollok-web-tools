@@ -21,9 +21,12 @@ export default (game: Game, projectImages: MediaFile[], projectSounds: MediaFile
     defaultImgs.forEach(path =>
       images.set(path, p.loadImage(DEFAULT_GAME_ASSETS_DIR + path))
     )
+    const fallbackImage = images.get('wko.png')
     projectImages.forEach(({ possiblePaths, url }) =>
       possiblePaths.forEach(path =>
-        images.set(path, p.loadImage(url))
+        images.set(path, p.loadImage(url + `?cb=${Date.now()}`, () => {}, () => {
+          images.set(path, fallbackImage)
+        }))
       )
     )
     projectSounds.forEach(({ possiblePaths, url }) =>
