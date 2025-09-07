@@ -4,8 +4,8 @@ import Game from './game'
 import { MediaFile } from './gameProject'
 import { GameSound } from './gameSound'
 import { resizeCanvas } from './render'
-import { DEFAULT_GAME_ASSETS_DIR, defaultImgs, wKeyCode } from './utils'
-
+import { wKeyCode } from './utils'
+import BASE64_IMAGES from './images'
 
 export default (game: Game, projectImages: MediaFile[], projectSounds: MediaFile[], canvasParent?: Element) => (p: p5): void => {
   const images = new Map<string, p5.Image>()
@@ -18,8 +18,8 @@ export default (game: Game, projectImages: MediaFile[], projectSounds: MediaFile
   const audioMuted = false
 
   p.preload = () => {
-    defaultImgs.forEach(path =>
-      images.set(path, p.loadImage(DEFAULT_GAME_ASSETS_DIR + path))
+    BASE64_IMAGES.forEach((base64Data, path) =>
+      images.set(path, p.loadImage(base64Data))
     )
     const fallbackImage = images.get('wko.png')
     projectImages.forEach(({ possiblePaths, url }) =>

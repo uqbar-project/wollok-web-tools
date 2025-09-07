@@ -2,18 +2,8 @@ import { Id, Interpreter, RuntimeObject } from 'wollok-ts'
 
 export const VALID_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif']
 export const VALID_SOUND_EXTENSIONS = ['mp3', 'ogg', 'wav']
-export const DEFAULT_GAME_ASSETS_DIR = '/'
 
 const { round } = Math
-
-export const defaultImgs = [
-  'ground.png',
-  'wko.png',
-  'speech.png',
-  'speech2.png',
-  'speech3.png',
-  'speech4.png',
-]
 
 function invokeMethod(interpreter: Interpreter, visual: RuntimeObject, method: string) {
   const lookedUpMethod = visual.module.lookupMethod(method, 0)
