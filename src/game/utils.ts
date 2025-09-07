@@ -2,7 +2,7 @@ import { Id, Interpreter, RuntimeObject } from 'wollok-ts'
 
 export const VALID_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif']
 export const VALID_SOUND_EXTENSIONS = ['mp3', 'ogg', 'wav']
-export const DEFAULT_GAME_ASSETS_DIR = 'https://raw.githubusercontent.com/uqbar-project/wollok/dev/org.uqbar.project.wollok.game/assets/'
+export const DEFAULT_GAME_ASSETS_DIR = '/'
 
 const { round } = Math
 
