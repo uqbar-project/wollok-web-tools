@@ -1,3 +1,4 @@
+import { Position } from './utils'
 
 export interface DrawableMessage {
   message: string;
@@ -52,11 +53,11 @@ function messageYPosition(drawer: MessageDrawer, message: DrawableMessage) {
   return yPositionIsOutOfCanvas(yPos) ? inverseYPos : yPos
 }
 
-export function messageTextPosition(drawer: MessageDrawer, message: DrawableMessage): { x: number; y: number } {
+export function messageTextPosition(drawer: MessageDrawer, message: DrawableMessage): Position {
   return { x: messageXPosition(drawer, message), y: messageYPosition(drawer, message) }
 }
 
-function messageSize(drawer: MessageDrawer, message: DrawableMessage): { x: number; y: number } {
+function messageSize(drawer: MessageDrawer, message: DrawableMessage): Position {
   const sizeLimit = messageSizeLimit()
   const textWidth = drawer.textWidth(message.message)
   const xSize = Math.min(textWidth, sizeLimit.x) + 10
@@ -70,7 +71,7 @@ function messageBackgroundPosition(drawer: MessageDrawer, message: DrawableMessa
   return { x: xPosition, y: yPosition }
 }
 
-function drawMessageBackground(drawer: MessageDrawer, message: DrawableMessage): { x: number; y: number } {
+function drawMessageBackground(drawer: MessageDrawer, message: DrawableMessage): Position {
   const size = messageSize(drawer, message)
   const position = messageBackgroundPosition(drawer, message)
   drawer.fill('white')
