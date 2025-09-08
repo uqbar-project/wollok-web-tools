@@ -11,7 +11,7 @@ export interface MessageDrawer {
   rect(xPos: number, yPos: number, xSize: number, ySize: number, tl?: number, tr?: number, br?: number, bl?: number): void;
   text(message: string, xPos: number, yPos: number, xLimit: number, yLimit: number): void;
   fill(color: string): void;
-  textAlign(alignment: string): void;
+  textAlign(horizontalAlignment: string, verticalAlignment: string): void;
   textSize(size: number): void;
   textStyle(style: string): void;
   stroke(color: string): void;
@@ -19,7 +19,8 @@ export interface MessageDrawer {
 }
 
 export const TEXT_STYLE = 'bold'
-export const TEXT_SIZE = 14
+export const TEXT_SIZE = 12
+export const PADDING = 5
 
 const sizeFactor = 50
 
@@ -55,7 +56,7 @@ export function messageTextPosition(drawer: MessageDrawer, message: DrawableMess
   return { x: messageXPosition(drawer, message), y: messageYPosition(drawer, message) }
 }
 
-function messageSize(drawer: MessageDrawer, message: DrawableMessage) {
+function messageSize(drawer: MessageDrawer, message: DrawableMessage): { x: number; y: number } {
   const sizeLimit = messageSizeLimit()
   const textWidth = drawer.textWidth(message.message)
   const xSize = Math.min(textWidth, sizeLimit.x) + 10
@@ -69,21 +70,23 @@ function messageBackgroundPosition(drawer: MessageDrawer, message: DrawableMessa
   return { x: xPosition, y: yPosition }
 }
 
-function drawMessageBackground(drawer: MessageDrawer, message: DrawableMessage) {
+function drawMessageBackground(drawer: MessageDrawer, message: DrawableMessage): { x: number; y: number } {
   const size = messageSize(drawer, message)
   const position = messageBackgroundPosition(drawer, message)
   drawer.fill('white')
   drawer.rect(position.x, position.y, size.x, size.y, 0, 15, 10, 5)
+  return position
 }
 
 export const drawMessage = (drawer: MessageDrawer) => (message: DrawableMessage): void => {
-  drawMessageBackground(drawer, message)
-  const position = messageTextPosition(drawer, message)
+  const backgroundPosition = drawMessageBackground(drawer, message)
   const limit = messageSizeLimit()
   drawer.textSize(TEXT_SIZE)
   drawer.textStyle(TEXT_STYLE)
   drawer.fill('black')
-  drawer.textAlign('left')
+  drawer.textAlign('left', 'top')
   drawer.noStroke()
-  drawer.text(message.message, position.x, position.y, limit.x, limit.y)
+  const textX = backgroundPosition.x + PADDING
+  const textY = backgroundPosition.y + PADDING
+  drawer.text(message.message, textX, textY, limit.x, limit.y)
 }
