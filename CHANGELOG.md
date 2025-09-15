@@ -1,6 +1,13 @@
 
 # Changelog
 
+## v1.1.10
+**Wollok TS Version: `4.2.3`**
+- 🐛 Fix say outside balloon image
+- ⚖️ Avoid image caching when running new game
+- 🌐 Avoid using network images (no internet required)
+- ⬆️ Upgrade Node to LTS 22
+
 ## v1.1.9
 **Wollok TS Version: `4.2.3`**
 - ⬆️ Upgrading Wollok TS version
