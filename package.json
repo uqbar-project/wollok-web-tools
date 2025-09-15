@@ -6,6 +6,15 @@
   "repository": "https://github.com/uqbar-project/wollok-web-tools",
   "author": "Uqbar",
   "license": "GPL-3.0",
+  "keywords": [
+    "wollok",
+    "wollok-ts",
+    "game",
+    "development",
+    "library",
+    "dynamic",
+    "diagram"
+  ],
   "scripts": {
     "test": "TS_NODE_PROJECT='./tsconfig.test.json' mocha --parallel -r ts-node/register/transpile-only test/**/*.spec.ts",
     "test:game": "http-server -o ./test/game",
