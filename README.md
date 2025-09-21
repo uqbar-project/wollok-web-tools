@@ -19,7 +19,22 @@ npm install  # or npm i
 
 - Make sure you have the latest version set in `package.json`
 - Also take some time and explain the changes in the `CHANGELOG.md` file
-- It's always good to tag the current `main` branch into a tag (TODO)
+- It's always good to tag the current `main` branch into a tag
+
+```bash
+git tag -a v1.1.10 -m "1.1.10"
+git push origin v1.1.10
+```
+
+(replace `v1.1.10` with the version you want to publish)
+
+- Create also a release: go to [this link](https://github.com/uqbar-project/wollok-web-tools/releases/new), and create a new release with the tag you just created. 
+  - The title should be the version number (no 'v' prefix)
+  - The description should be the changes in the `CHANGELOG.md` file
+  - Uncheck "Set as a pre-release"
+  - Check "Set as the latest release"
+  - Click "Publish release"
+
 - Run `npm run build` in order to generate `dist` folder
 - Then simply run
 
