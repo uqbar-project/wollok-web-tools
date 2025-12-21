@@ -1,15 +1,16 @@
-import p5, { SoundFile } from 'p5'
+import p5 from 'p5'
 import { Id } from 'wollok-ts'
 import Game from './game'
 import { MediaFile } from './gameProject'
 import { GameSound } from './gameSound'
 import { resizeCanvas } from './render'
 import { wKeyCode } from './utils'
+import { Howl } from 'howler'
 import BASE64_IMAGES from './images'
 
-export default (game: Game, projectImages: MediaFile[], projectSounds: MediaFile[], canvasParent?: Element) => (p: p5): void => {
+export const sketch = (game: Game, projectImages: MediaFile[], projectSounds: MediaFile[], canvasParent?: HTMLElement) => (p: p5): void => {
   const images = new Map<string, p5.Image>()
-  const sounds = new Map<Id, SoundFile>()
+  const sounds = new Map<Id, Howl>()
   const currentSounds = new Map<Id, GameSound>()
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -31,7 +32,7 @@ export default (game: Game, projectImages: MediaFile[], projectSounds: MediaFile
     )
     projectSounds.forEach(({ possiblePaths, url }) =>
       possiblePaths.forEach(path =>
-        sounds.set(path, new SoundFile(url))
+        sounds.set(path, new Howl({ src: url }))
       )
     )
   }

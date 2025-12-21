@@ -1,14 +1,13 @@
-// import 'p5'
-import { SoundFile } from 'p5'
 import { SoundState } from './utils'
+import { Howl } from 'howler'
 
 export class GameSound {
   private lastSoundState: SoundState
-  private soundFile: SoundFile
+  private soundFile: Howl
   private started: boolean
   public toBePlayed: boolean
 
-  constructor(lastSoundState: SoundState, soundFile: SoundFile) {
+  constructor(lastSoundState: SoundState, soundFile: Howl) {
     this.lastSoundState = lastSoundState
     this.soundFile = soundFile
     this.started = false
@@ -16,7 +15,7 @@ export class GameSound {
   }
 
   public isLoaded(): boolean {
-    return this.soundFile.isLoaded()
+    return this.soundFile.state() === 'loaded'
   }
 
   public canBePlayed(newSoundState: SoundState): boolean {
@@ -24,8 +23,8 @@ export class GameSound {
   }
 
   public update(newSoundState: SoundState): void {
-    this.soundFile.setLoop(newSoundState.loop)
-    this.soundFile.setVolume(newSoundState.volume)
+    this.soundFile.loop(newSoundState.loop)
+    this.soundFile.volume(newSoundState.volume)
     this.toBePlayed = this.canBePlayed(newSoundState)
     this.lastSoundState = newSoundState
   }
