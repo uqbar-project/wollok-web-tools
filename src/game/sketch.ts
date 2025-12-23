@@ -24,11 +24,14 @@ export const sketch = (game: Game, projectImages: MediaFile[], projectSounds: Me
     )
     const fallbackImage = images.get('wko.png')
     projectImages.forEach(({ possiblePaths, url }) =>
-      possiblePaths.forEach(path =>
-        images.set(path, p.loadImage(url + `?cb=${Date.now()}`, () => {}, () => {
+      possiblePaths.forEach(path => {
+        // We can also load images as base64 strings,
+        // dont append a cache buster to those
+        const isDataUrl = url.startsWith('data:')
+        images.set(path, p.loadImage(url + (isDataUrl ? '' : `?cb=${Date.now()}`), () => {}, () => {
           images.set(path, fallbackImage)
         }))
-      )
+      })
     )
     projectSounds.forEach(({ possiblePaths, url }) =>
       possiblePaths.forEach(path =>
