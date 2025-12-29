@@ -1,4 +1,4 @@
-import p5, { Renderer, SoundFile } from 'p5'
+import p5, { Renderer } from 'p5'
 import { Id } from 'wollok-ts'
 import Game from './game'
 import { GameSound } from './gameSound'
