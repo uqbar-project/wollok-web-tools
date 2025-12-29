@@ -1,7 +1,7 @@
 import { should, use } from 'chai'
 import { buildEnvironment, DynamicDiagramElement, Evaluation, getDynamicDiagramData, interprete, Interpreter, REPL, WRENatives } from 'wollok-ts'
-import { diagramAssertions } from './diagram-assertions'
-import { getDataDiagram } from '../../src/dynamicDiagram/diagram-generator'
+import { diagramAssertions } from './diagram-assertions.js'
+import { getDataDiagram } from '../../src/dynamicDiagram/diagram-generator.js'
 
 use(diagramAssertions)
 should()

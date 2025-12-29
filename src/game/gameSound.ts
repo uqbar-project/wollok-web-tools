@@ -1,4 +1,4 @@
-import { SoundState } from './utils'
+import { SoundState } from './utils.js'
 import { Howl } from 'howler'
 
 export class GameSound {

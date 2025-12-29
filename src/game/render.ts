@@ -1,9 +1,9 @@
 import p5, { Renderer } from 'p5'
 import { Id } from 'wollok-ts'
-import Game from './game'
-import { GameSound } from './gameSound'
-import { DrawableMessage, TEXT_SIZE, TEXT_STYLE, drawMessage } from './messages'
-import { hexaToColor, Position } from './utils'
+import Game from './game.js'
+import { GameSound } from './gameSound.js'
+import { DrawableMessage, TEXT_SIZE, TEXT_STYLE, drawMessage } from './messages.js'
+import { hexaToColor, Position } from './utils.js'
 
 const { round, min } = Math
 

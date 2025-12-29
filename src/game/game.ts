@@ -1,12 +1,12 @@
 import p5 from 'p5'
 import { Socket } from 'socket.io'
 import { Environment, Id, Interpreter, WRENatives, buildEnvironment, interpret } from 'wollok-ts'
-import { GameProject, MediaFile, getProgramIn } from './gameProject'
-import { GameSound } from './gameSound'
-import { step } from './render'
-import { sketch } from './sketch'
+import { GameProject, MediaFile, getProgramIn } from './gameProject.js'
+import { GameSound } from './gameSound.js'
+import { step } from './render.js'
+import { sketch } from './sketch.js'
 import { Howl } from 'howler'
-import { Asset, BoardState, Resolution, SoundState, VisualState, boardState, buildKeyPressEvent, canvasResolution, flushEvents, queueEvent, soundState, visualState } from './utils'
+import { Asset, BoardState, Resolution, SoundState, VisualState, boardState, buildKeyPressEvent, canvasResolution, flushEvents, queueEvent, soundState, visualState } from './utils.js'
 
 const { round } = Math
 
