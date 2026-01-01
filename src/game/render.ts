@@ -4,6 +4,7 @@ import Game from './game.js'
 import { GameSound } from './gameSound.js'
 import { DrawableMessage, TEXT_SIZE, TEXT_STYLE, drawMessage } from './messages.js'
 import { hexaToColor, Position } from './utils.js'
+import { Howl } from 'howler'
 
 const { round, min } = Math
 

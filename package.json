@@ -29,8 +29,8 @@
     "node": ">=10.0.0"
   },
   "dependencies": {
-    "cytoscape": "3.30.2",
-    "howler": "^2.2.4",
+    "cytoscape": "3.33.1",
+    "howler": "2.2.4",
     "p5": "1.11.0",
     "path": "0.12.7",
     "socket.io": "4.8.0",
@@ -39,8 +39,8 @@
   "devDependencies": {
     "@stylistic/eslint-plugin-ts": "2.8.0",
     "@types/chai": "4.3.6",
-    "@types/cytoscape": "^3.21.9",
-    "@types/howler": "^2.2.12",
+    "@types/cytoscape": "3.31.0",
+    "@types/howler": "2.2.4",
     "@types/mocha": "10.0.8",
     "@types/p5": "1.4.0",
     "@types/sinon": "17.0.3",
