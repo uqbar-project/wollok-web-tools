@@ -12,6 +12,7 @@ export const sketch = (game: Game, projectImages: MediaFile[], projectSounds: Me
   const images = new Map<string, p5.Image>()
   const sounds = new Map<Id, Howl>()
   const currentSounds = new Map<Id, GameSound>()
+  const baseRemove = p.remove
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let stop = false
@@ -63,5 +64,10 @@ export const sketch = (game: Game, projectImages: MediaFile[], projectSounds: Me
     }
 
     return false
+  }
+
+  p.remove = () => {
+    baseRemove.call(p)
+    sounds.forEach( sound => sound.unload())
   }
 }
