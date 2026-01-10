@@ -35,6 +35,13 @@ export function buildKeyPressEvent(interpreter: Interpreter, keyCode: string): R
   )
 }
 
+export function buildKeyReleaseEvent(interpreter: Interpreter, keyCode: string): RuntimeObject {
+  return interpreter.list(
+    interpreter.reify('keyrelease'),
+    interpreter.reify(keyCode)
+  )
+}
+
 export interface VisualState {
   image?: string
   position: Position

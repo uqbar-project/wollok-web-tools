@@ -53,11 +53,17 @@ export default (game: Game, projectImages: MediaFile[], projectSounds: MediaFile
   p.keyPressed = () => {
     if (!gamePaused) {
       window.performance.mark('key-start')
-      game.queueEvent(wKeyCode(p.key, p.keyCode), 'ANY')
+      game.queueKeyPressEvent(wKeyCode(p.key, p.keyCode), 'ANY')
       window.performance.mark('key-end')
       window.performance.measure('key-start-to-end', 'key-start', 'key-end')
     }
 
+    return false
+  }
+
+  p.keyReleased = () => {
+    const keyCode = wKeyCode(p.key, p.keyCode)
+    game.queueKeyReleaseEvent(keyCode, 'ANY')
     return false
   }
 }

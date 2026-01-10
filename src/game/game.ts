@@ -5,7 +5,7 @@ import { GameProject, MediaFile, getProgramIn } from './gameProject'
 import { GameSound } from './gameSound'
 import { step } from './render'
 import sketch from './sketch'
-import { Asset, BoardState, Resolution, SoundState, VisualState, boardState, buildKeyPressEvent, canvasResolution, flushEvents, queueEvent, soundState, visualState } from './utils'
+import { Asset, BoardState, Resolution, SoundState, VisualState, boardState, buildKeyPressEvent, buildKeyReleaseEvent, canvasResolution, flushEvents, queueEvent, soundState, visualState } from './utils'
 
 const { round } = Math
 
@@ -24,7 +24,8 @@ export interface Game {
   get visuals(): VisualState[]
   get canvasResolution(): Resolution
   get soundStates(): SoundState[]
-  queueEvent(...events: string[]): void
+  queueKeyPressEvent(...events: string[]): void
+  queueKeyReleaseEvent(...events: string[]): void
   flushEvents(ms: number): void
   step(sketch: p5, gameState: GameState): void
 }
@@ -61,8 +62,12 @@ export class LocalGame implements Game {
     return soundInstances.map(soundState)
   }
 
-  queueEvent(...events: string[]): void {
+  queueKeyPressEvent(...events: string[]): void {
     queueEvent(this.interpreter, ...events.map(code => buildKeyPressEvent(this.interpreter, code)))
+  }
+
+  queueKeyReleaseEvent(...events: string[]): void {
+    queueEvent(this.interpreter, ...events.map(code => buildKeyReleaseEvent(this.interpreter, code)))
   }
 
   flushEvents(ms: number): void{
@@ -125,8 +130,12 @@ export class SocketGame implements Game {
     }
   }
 
-  queueEvent(...events: string[]): void {
+  queueKeyPressEvent(...events: string[]): void {
     this.socket.emit('keyPressed', events)
+  }
+
+  queueKeyReleaseEvent(...events: string[]): void {
+    this.socket.emit('keyReleased', events)
   }
 
   flushEvents(_ms: number): void {
