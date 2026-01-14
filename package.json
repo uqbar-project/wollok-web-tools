@@ -1,6 +1,6 @@
 {
   "name": "wollok-web-tools",
-  "version": "1.1.10",
+  "version": "2.0.0",
   "description": "Wollok Web Tools library for web development",
   "type": "module",
   "main": "dist/index.js",
