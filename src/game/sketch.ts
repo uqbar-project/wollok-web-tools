@@ -1,16 +1,18 @@
-import p5, { SoundFile } from 'p5'
+import p5 from 'p5'
 import { Id } from 'wollok-ts'
-import Game from './game'
-import { MediaFile } from './gameProject'
-import { GameSound } from './gameSound'
-import { resizeCanvas } from './render'
-import { wKeyCode } from './utils'
+import Game from './game.js'
+import { MediaFile } from './gameProject.js'
+import { GameSound } from './gameSound.js'
+import { resizeCanvas } from './render.js'
+import { wKeyCode } from './utils.js'
+import { Howl } from 'howler'
 import BASE64_IMAGES from './images'
 
-export default (game: Game, projectImages: MediaFile[], projectSounds: MediaFile[], canvasParent?: Element) => (p: p5): void => {
+export const sketch = (game: Game, projectImages: MediaFile[], projectSounds: MediaFile[], canvasParent?: HTMLElement) => (p: p5): void => {
   const images = new Map<string, p5.Image>()
-  const sounds = new Map<Id, SoundFile>()
+  const sounds = new Map<Id, Howl>()
   const currentSounds = new Map<Id, GameSound>()
+  const baseRemove = p.remove
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let stop = false
@@ -23,15 +25,18 @@ export default (game: Game, projectImages: MediaFile[], projectSounds: MediaFile
     )
     const fallbackImage = images.get('wko.png')
     projectImages.forEach(({ possiblePaths, url }) =>
-      possiblePaths.forEach(path =>
-        images.set(path, p.loadImage(url + `?cb=${Date.now()}`, () => {}, () => {
+      possiblePaths.forEach(path => {
+        // We can also load images as base64 strings,
+        // dont append a cache buster to those
+        const isDataUrl = url.startsWith('data:')
+        images.set(path, p.loadImage(url + (isDataUrl ? '' : `?cb=${Date.now()}`), () => {}, () => {
           images.set(path, fallbackImage)
         }))
-      )
+      })
     )
     projectSounds.forEach(({ possiblePaths, url }) =>
       possiblePaths.forEach(path =>
-        sounds.set(path, new SoundFile(url))
+        sounds.set(path, new Howl({ src: url }))
       )
     )
   }
@@ -59,5 +64,10 @@ export default (game: Game, projectImages: MediaFile[], projectSounds: MediaFile
     }
 
     return false
+  }
+
+  p.remove = () => {
+    baseRemove.call(p)
+    sounds.forEach( sound => sound.unload())
   }
 }
