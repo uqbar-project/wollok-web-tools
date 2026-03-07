@@ -6,7 +6,7 @@ import { GameSound } from './gameSound.js'
 import { step } from './render.js'
 import { sketch } from './sketch.js'
 import { Howl } from 'howler'
-import { Asset, BoardState, Resolution, SoundState, VisualState, boardState, buildKeyPressEvent, buildKeyReleaseEvent, canvasResolution, flushEvents, queueEvent, soundState, visualState } from './utils'
+import { Asset, BoardState, Resolution, SoundState, VisualState, boardState, buildKeyPressEvent, buildKeyReleaseEvent, canvasResolution, flushEvents, queueEvent, soundState, visualState } from './utils.js'
 
 const { round } = Math
 
