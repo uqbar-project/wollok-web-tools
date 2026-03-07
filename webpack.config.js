@@ -1,37 +1,45 @@
-const path = require('path');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+import path from "path";
+import { fileURLToPath } from "url";
+import { CleanWebpackPlugin } from "clean-webpack-plugin";
 
-module.exports = {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default {
   entry: {
-    game:'./src/game/game-index.ts',
-    dynamicDiagram: './src/dynamicDiagram/diagram-index.ts',
+    game: "./src/game/game-index.ts",
+    dynamicDiagram: "./src/dynamicDiagram/diagram-index.ts",
   },
   module: {
     rules: [
       {
-        use: 'ts-loader',
+        use: "ts-loader",
         exclude: /node_modules/,
       },
     ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
-    fallback: { 'console': false }
+    extensions: [".tsx", ".ts", ".js"],
+    extensionAlias: {
+      ".js": [".js", ".ts"],
+      ".mjs": [".mjs", ".mts"],
+    },
+    fallback: { console: false },
   },
   plugins: [
     new CleanWebpackPlugin({
       protectWebpackAssets: false,
-      cleanAfterEveryBuildPatterns: ['*.LICENSE.txt'],
-    })
+      cleanAfterEveryBuildPatterns: ["*.LICENSE.txt"],
+    }),
   ],
   optimization: {
-    minimize: true
+    minimize: true,
   },
   output: {
-    filename: '[name]-index.js',
-    path: path.resolve(__dirname, 'dist', 'web'),
+    filename: "[name]-index.js",
+    path: path.resolve(__dirname, "dist", "web"),
   },
   watchOptions: {
-    ignored: '/node_modules/',
+    ignored: "/node_modules/",
   },
 };

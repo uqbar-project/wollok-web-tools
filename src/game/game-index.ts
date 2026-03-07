@@ -8,9 +8,7 @@ declare global {
 import p5 from 'p5'
 global.p5 = p5
 
-import { LocalGame, SocketGame } from './game'
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-require('p5/lib/addons/p5.sound')
+import { LocalGame, SocketGame } from './game.js'
 
 window.LocalGame = LocalGame
 window.SocketGame = SocketGame

@@ -6,12 +6,13 @@ import { GameSound } from './gameSound'
 import { step } from './render'
 import sketch from './sketch'
 import { Asset, BoardState, Resolution, SoundState, VisualState, boardState, buildKeyPressEvent, buildKeyReleaseEvent, canvasResolution, flushEvents, queueEvent, soundState, visualState } from './utils'
+import { Howl } from 'howler'
 
 const { round } = Math
 
 interface GameState {
   images: Map<string, p5.Image>
-  sounds: Map<Id, p5.SoundFile>
+  sounds: Map<Id, Howl>
   currentSounds: Map<Id, GameSound>
   gamePaused: boolean
   audioMuted: boolean
@@ -41,9 +42,9 @@ export class LocalGame implements Game {
     this.interpreter = interpret(this.environment, WRENatives)
   }
 
-  start(canvasParent?: Element): p5 {
+  start(canvasParent?: HTMLElement): p5 {
     this.interpreter.exec(getProgramIn(this.project.main, this.environment))
-    return new p5(sketch(this, this.project.images, this.project.sounds, canvasParent))
+    return new p5(sketch(this, this.project.images, this.project.sounds, canvasParent), canvasParent)
   }
 
   get running(): boolean { return this.gameObject.get('running')!.innerBoolean! }
@@ -117,9 +118,9 @@ export class SocketGame implements Game {
     socket.on('error', data => console.log(data))
   }
 
-  start(canvasParent?: Element): p5 {
+  start(canvasParent?: HTMLElement): p5 {
     this.running = true
-    return new p5(sketch(this, this.images, this.sounds, canvasParent))
+    return new p5(sketch(this, this.images, this.sounds, canvasParent), canvasParent)
   }
 
   get canvasResolution(): Resolution {

@@ -1,9 +1,10 @@
-import p5, { Renderer, SoundFile } from 'p5'
+import p5, { Renderer } from 'p5'
 import { Id } from 'wollok-ts'
-import Game from './game'
-import { GameSound } from './gameSound'
-import { DrawableMessage, TEXT_SIZE, TEXT_STYLE, drawMessage } from './messages'
-import { hexaToColor, Position } from './utils'
+import Game from './game.js'
+import { GameSound } from './gameSound.js'
+import { DrawableMessage, TEXT_SIZE, TEXT_STYLE, drawMessage } from './messages.js'
+import { hexaToColor, Position } from './utils.js'
+import { Howl } from 'howler'
 
 const { round, min } = Math
 
@@ -103,7 +104,7 @@ interface StepAssets {
   sketch: p5
   game: Game
   images: Map<Id, p5.Image>
-  sounds: Map<Id, SoundFile>
+  sounds: Map<Id, Howl>
   currentSounds: Map<Id, GameSound>
   audioMuted: boolean
   gamePaused: boolean
@@ -129,7 +130,7 @@ export function step(assets: StepAssets): void {
   }
 }
 
-export function updateSound(game: Game, sounds: Map<string, SoundFile>, currentSounds: Map<Id, GameSound>, audioMuted: boolean): void {
+export function updateSound(game: Game, sounds: Map<string, Howl>, currentSounds: Map<Id, GameSound>, audioMuted: boolean): void {
   const { soundStates } = game
 
   for (const [id, sound] of currentSounds.entries()) {

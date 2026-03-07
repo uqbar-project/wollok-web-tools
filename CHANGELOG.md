@@ -1,6 +1,11 @@
 
 # Changelog
 
+## v2.0.0
+**Wollok TS Version: `4.2.3`**
+- 🎵 Use Howler for sounds
+- 🚀 Migrate to ESM
+
 ## v1.1.10
 **Wollok TS Version: `4.2.3`**
 - 🐛 Fix say outside balloon image

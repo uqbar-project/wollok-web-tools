@@ -1,4 +1,4 @@
-import { Position } from './utils'
+import { Position } from './utils.js'
 
 export interface DrawableMessage {
   message: string;
