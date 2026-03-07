@@ -5,8 +5,8 @@ import { GameProject, MediaFile, getProgramIn } from './gameProject.js'
 import { GameSound } from './gameSound.js'
 import { step } from './render.js'
 import { sketch } from './sketch.js'
-import { Asset, BoardState, Resolution, SoundState, VisualState, boardState, buildKeyPressEvent, buildKeyReleaseEvent, canvasResolution, flushEvents, queueEvent, soundState, visualState } from './utils'
 import { Howl } from 'howler'
+import { Asset, BoardState, Resolution, SoundState, VisualState, boardState, buildKeyPressEvent, buildKeyReleaseEvent, canvasResolution, flushEvents, queueEvent, soundState, visualState } from './utils'
 
 const { round } = Math
 
