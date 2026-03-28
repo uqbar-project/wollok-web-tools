@@ -34,7 +34,7 @@
     "p5": "1.11.0",
     "path": "0.12.7",
     "socket.io": "4.8.0",
-    "wollok-ts": "4.2.3"
+    "wollok-ts": "4.2.4"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin-ts": "2.8.0",
