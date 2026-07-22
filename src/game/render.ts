@@ -62,7 +62,7 @@ export function baseDrawable(images: Map<string, p5.Image>, path?: string): Draw
       color: 'black', horizAlign: p5.prototype.LEFT,
       vertAlign: p5.prototype.TOP, text: 'IMAGE\n  NOT\nFOUND', position: origin,
     }
-    return { drawableImage: { image: images.get('wko.png')!, position: origin }, drawableText }
+    return { drawableImage: { image: images.get('wko')!, position: origin }, drawableText }
   }
 
   return { drawableImage: { image: p5Image, position: origin } }

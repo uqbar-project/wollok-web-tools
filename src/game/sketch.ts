@@ -23,7 +23,7 @@ export const sketch = (game: Game, projectImages: MediaFile[], projectSounds: Me
     BASE64_IMAGES.forEach((base64Data, path) =>
       images.set(path, p.loadImage(base64Data))
     )
-    const fallbackImage = images.get('wko.png')
+    const fallbackImage = images.get('wko')
     projectImages.forEach(({ possiblePaths, url }) =>
       possiblePaths.forEach(path => {
         // We can also load images as base64 strings,
