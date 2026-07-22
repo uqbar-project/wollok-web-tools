@@ -42,6 +42,32 @@ export function buildKeyReleaseEvent(interpreter: Interpreter, keyCode: string):
   )
 }
 
+export function buildMouseClickedEvent(interpreter: Interpreter, position: Position): RuntimeObject {
+  return interpreter.list(
+    interpreter.reify('mouseclick'),
+    interpreter.reify(position.x),
+    interpreter.reify(position.y)
+  )
+}
+
+export function buildDoubleClickedEvent(interpreter: Interpreter, position: Position): RuntimeObject {
+  return interpreter.list(
+    interpreter.reify('doubleclick'),
+    interpreter.reify(position.x),
+    interpreter.reify(position.y)
+  )
+}
+
+export function pixelsToPosition(x: number, y: number, board: { width: number; height: number; cellSize: number }, canvasHeight: number): Position {
+  const boardX = Math.floor(x / board.cellSize)
+  const boardY = Math.floor((canvasHeight - y) / board.cellSize)
+  return { x: Math.max(0, Math.min(boardX, board.width - 1)), y: Math.max(0, Math.min(boardY, board.height - 1)) }
+}
+
+export function positionToPixels(position: Position, canvasHeight: number, cellSize: number): Position {
+  return { x: position.x * cellSize, y: canvasHeight - (position.y + 1) * cellSize }
+}
+
 export interface VisualState {
   image?: string
   position: Position
@@ -69,10 +95,10 @@ export function visualState(interpreter: Interpreter, visual: RuntimeObject): Vi
   const image = invokeMethod(interpreter, visual, 'image')
   const text = invokeMethod(interpreter, visual, 'text')
   const textColor = invokeMethod(interpreter, visual, 'textColor')
-  const position = interpreter.send('position', visual)
-  const roundedPosition = interpreter.send('round', position)
-  const x = roundedPosition.get('x')!.innerNumber
-  const y = roundedPosition.get('y')!.innerNumber
+  const position = interpreter.send('position', visual)!
+  const roundedPosition = interpreter.send('round', position)!
+  const x = roundedPosition.get('x')!.innerNumber!
+  const y = roundedPosition.get('y')!.innerNumber!
   const message = visual.get('message')?.innerString
   const messageTime = visual.get('messageTime')?.innerNumber
   return { image, position: { x, y }, text, textColor, message, messageTime }
@@ -108,11 +134,11 @@ export interface BoardState {
 }
 
 export function boardState(game: RuntimeObject): BoardState {
-  const cellSize = game.get('cellSize')!.innerNumber
-  const boardGround = game.get('boardGround')?.innerString
-  const ground = game.get('ground')!.innerString
-  const width = game.get('width')!.innerNumber
-  const height = game.get('height')!.innerNumber
+  const cellSize = game.get('cellSize')!.innerNumber!
+  const boardGround = game.get('boardGround')?.innerString!
+  const ground = game.get('ground')!.innerString!
+  const width = game.get('width')!.innerNumber!
+  const height = game.get('height')!.innerNumber!
   return { cellSize, boardGround, ground, width, height }
 }
 
