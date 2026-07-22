@@ -45,17 +45,19 @@ export function buildKeyReleaseEvent(interpreter: Interpreter, keyCode: string):
 export function buildMouseClickedEvent(interpreter: Interpreter, position: Position): RuntimeObject {
   return interpreter.list(
     interpreter.reify('mouseclick'),
-    interpreter.reify(position.x),
-    interpreter.reify(position.y)
+    wPosition(interpreter, position)
   )
 }
 
 export function buildDoubleClickedEvent(interpreter: Interpreter, position: Position): RuntimeObject {
   return interpreter.list(
     interpreter.reify('doubleclick'),
-    interpreter.reify(position.x),
-    interpreter.reify(position.y)
+    wPosition(interpreter, position)
   )
+}
+
+export function wPosition(interpreter: Interpreter, { x, y }: Position): RuntimeObject {
+  return interpreter.send('at', interpreter.object('wollok.game.game'), interpreter.reify(x), interpreter.reify(y))!
 }
 
 export function pixelsToPosition(x: number, y: number, board: { width: number; height: number; cellSize: number }, canvasHeight: number): Position {

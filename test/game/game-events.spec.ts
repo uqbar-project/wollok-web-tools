@@ -5,7 +5,7 @@ import { buildDoubleClickedEvent, buildKeyPressEvent, buildKeyReleaseEvent, buil
 should()
 
 describe('Game', () => {
-  
+
   it('converts board-cell positions back into pixel coordinates', () => {
     const pixels = positionToPixels({ x: 2, y: 0 }, 100, 10)
     pixels.should.deep.equal({ x: 20, y: 90 })
@@ -28,19 +28,18 @@ describe('Game', () => {
     })
 
     it('builds a mouse clicked event with a board-cell position', () => {
-      const event = buildMouseClickedEvent(interpreter, { x: 2, y: 0 })
-      const values = event.innerCollection!.map(entry => entry.innerString ?? entry.innerNumber)
-
-      values.should.deep.equal(['mouseclick', 2, 0])
+      const [name, position] = buildMouseClickedEvent(interpreter, { x: 2, y: 0 }).innerCollection!
+      name.innerString!.should.deep.equal('mouseclick')
+      position.get('x')!.innerNumber!.should.deep.equal(2)
+      position.get('y')!.innerNumber!.should.deep.equal(0)
     })
 
     it('builds a double clicked event with a board-cell position', () => {
-      const event = buildDoubleClickedEvent(interpreter, { x: 1, y: 3 })
-      const values = event.innerCollection!.map(entry => entry.innerNumber ?? entry.innerString)
-
-      values.should.deep.equal(['doubleclick', 1, 3])
+      const [name, position] = buildDoubleClickedEvent(interpreter, { x: 1, y: 3 }).innerCollection!
+      name.innerString!.should.deep.equal('doubleclick')
+      position.get('x')!.innerNumber!.should.deep.equal(1)
+      position.get('y')!.innerNumber!.should.deep.equal(3)
     })
-
 
     it('builds a key press event with the pressed key', () => {
       const event = buildKeyPressEvent(interpreter, 'KeyA')
