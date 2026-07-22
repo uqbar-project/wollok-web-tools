@@ -20,7 +20,7 @@ export interface MediaFile {
 }
 export interface GameProject {
   main: string;
-  sources?: SourceFile[];
+  sources: SourceFile[];
   description: string;
   images: MediaFile[];
   sounds: MediaFile[];
