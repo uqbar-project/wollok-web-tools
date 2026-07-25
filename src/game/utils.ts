@@ -28,32 +28,32 @@ export function wKeyCode(keyName: string, keyCode: number): string { //These key
   return '' //If an unknown key is pressed, a string should be returned
 }
 
-export function buildKeyPressEvent(interpreter: Interpreter, keyCode: string): RuntimeObject {
-  return interpreter.list(
+export function buildKeyPressEvent(interpreter: Interpreter, keyCode: string): RuntimeObject[] {
+  return [
     interpreter.reify('keypress'),
     interpreter.reify(keyCode)
-  )
+  ]
 }
 
-export function buildKeyReleaseEvent(interpreter: Interpreter, keyCode: string): RuntimeObject {
-  return interpreter.list(
+export function buildKeyReleaseEvent(interpreter: Interpreter, keyCode: string): RuntimeObject[] {
+  return [
     interpreter.reify('keyrelease'),
     interpreter.reify(keyCode)
-  )
+  ]
 }
 
-export function buildMouseClickedEvent(interpreter: Interpreter, position: Position): RuntimeObject {
-  return interpreter.list(
+export function buildMouseClickedEvent(interpreter: Interpreter, position: Position): RuntimeObject[] {
+  return [
     interpreter.reify('mouseclick'),
     wPosition(interpreter, position)
-  )
+  ]
 }
 
-export function buildDoubleClickedEvent(interpreter: Interpreter, position: Position): RuntimeObject {
-  return interpreter.list(
+export function buildDoubleClickedEvent(interpreter: Interpreter, position: Position): RuntimeObject[] {
+  return [
     interpreter.reify('doubleclick'),
     wPosition(interpreter, position)
-  )
+  ]
 }
 
 export function wPosition(interpreter: Interpreter, { x, y }: Position): RuntimeObject {
@@ -122,9 +122,9 @@ export function canvasResolution(interpreter: Interpreter): Resolution {
   return { width, height }
 }
 
-export function queueEvent(interpreter: Interpreter, ...events: RuntimeObject[]): void {
+export function queueEvent(interpreter: Interpreter, ...events: RuntimeObject[][]): void {
   const io = interpreter.object('wollok.lang.io')
-  events.forEach(e => interpreter.send('queueEvent', io, e))
+  events.forEach(e => interpreter.send('queueEvent', io, ...e))
 }
 
 export interface BoardState {
