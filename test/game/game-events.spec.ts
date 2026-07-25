@@ -19,7 +19,7 @@ describe('Game', () => {
     pixelsToPosition(0, 11, board, 100).should.deep.equal({ x: 0, y: 8 })
   })
 
-  describe("events", () => {
+  describe('events', () => {
     let interpreter: Interpreter
 
     beforeEach(() => {
@@ -28,14 +28,14 @@ describe('Game', () => {
     })
 
     it('builds a mouse clicked event with a board-cell position', () => {
-      const [name, position] = buildMouseClickedEvent(interpreter, { x: 2, y: 0 }).innerCollection!
+      const [name, position] = buildMouseClickedEvent(interpreter, { x: 2, y: 0 })
       name.innerString!.should.deep.equal('mouseclick')
       position.get('x')!.innerNumber!.should.deep.equal(2)
       position.get('y')!.innerNumber!.should.deep.equal(0)
     })
 
     it('builds a double clicked event with a board-cell position', () => {
-      const [name, position] = buildDoubleClickedEvent(interpreter, { x: 1, y: 3 }).innerCollection!
+      const [name, position] = buildDoubleClickedEvent(interpreter, { x: 1, y: 3 })
       name.innerString!.should.deep.equal('doubleclick')
       position.get('x')!.innerNumber!.should.deep.equal(1)
       position.get('y')!.innerNumber!.should.deep.equal(3)
@@ -43,13 +43,13 @@ describe('Game', () => {
 
     it('builds a key press event with the pressed key', () => {
       const event = buildKeyPressEvent(interpreter, 'KeyA')
-      const values = event.innerCollection!.map(entry => entry.innerString)
+      const values = event.map(entry => entry.innerString)
       values.should.deep.equal(['keypress', 'KeyA'])
     })
 
     it('builds a key release event with the released key', () => {
       const event = buildKeyReleaseEvent(interpreter, 'KeyA')
-      const values = event.innerCollection!.map(entry => entry.innerString)
+      const values = event.map(entry => entry.innerString)
       values.should.deep.equal(['keyrelease', 'KeyA'])
     })
   })

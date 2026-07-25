@@ -31,28 +31,28 @@ export function wKeyCode(keyName: string, keyCode: number): string { //These key
 export function buildKeyPressEvent(interpreter: Interpreter, keyCode: string): RuntimeObject[] {
   return [
     interpreter.reify('keypress'),
-    interpreter.reify(keyCode)
+    interpreter.reify(keyCode),
   ]
 }
 
 export function buildKeyReleaseEvent(interpreter: Interpreter, keyCode: string): RuntimeObject[] {
   return [
     interpreter.reify('keyrelease'),
-    interpreter.reify(keyCode)
+    interpreter.reify(keyCode),
   ]
 }
 
 export function buildMouseClickedEvent(interpreter: Interpreter, position: Position): RuntimeObject[] {
   return [
     interpreter.reify('mouseclick'),
-    wPosition(interpreter, position)
+    wPosition(interpreter, position),
   ]
 }
 
 export function buildDoubleClickedEvent(interpreter: Interpreter, position: Position): RuntimeObject[] {
   return [
     interpreter.reify('doubleclick'),
-    wPosition(interpreter, position)
+    wPosition(interpreter, position),
   ]
 }
 
