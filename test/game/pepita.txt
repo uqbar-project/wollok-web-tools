@@ -14,5 +14,6 @@ program juego {
         game.say(pepita, "Ouch") 
         game.sound('musica.mp3').play()
     })
+    // game.onClickDo({ pos => pepita.position(pos) })
     game.start()
 }

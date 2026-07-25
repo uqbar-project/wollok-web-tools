@@ -1,4 +1,4 @@
-import { Id, Interpreter, RuntimeObject } from 'wollok-ts'
+import { GAME_MODULE, Id, Interpreter, RuntimeObject } from 'wollok-ts'
 
 export const VALID_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif']
 export const VALID_SOUND_EXTENSIONS = ['mp3', 'ogg', 'wav']
@@ -115,7 +115,7 @@ export function flushEvents(interpreter: Interpreter, ms: number): void {
 }
 
 export function canvasResolution(interpreter: Interpreter): Resolution {
-  const game = interpreter.object('wollok.game.game')
+  const game = interpreter.object(GAME_MODULE)
   const cellPixelSize = game.get('cellSize')!.innerNumber!
   const width = round(game.get('width')!.innerNumber!) * cellPixelSize
   const height = round(game.get('height')!.innerNumber!) * cellPixelSize
@@ -137,7 +137,7 @@ export interface BoardState {
 
 export function boardState(game: RuntimeObject): BoardState {
   const cellSize = game.get('cellSize')!.innerNumber!
-  const boardGround = game.get('boardGround')?.innerString!
+  const boardGround = game.get('boardGround')?.innerString
   const ground = game.get('ground')!.innerString!
   const width = game.get('width')!.innerNumber!
   const height = game.get('height')!.innerNumber!
