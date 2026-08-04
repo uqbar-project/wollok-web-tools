@@ -1,4 +1,4 @@
-import { Id, Interpreter, RuntimeObject } from 'wollok-ts'
+import { GAME_MODULE, Id, Interpreter, RuntimeObject } from 'wollok-ts'
 
 export const VALID_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif']
 export const VALID_SOUND_EXTENSIONS = ['mp3', 'ogg', 'wav']
@@ -28,18 +28,46 @@ export function wKeyCode(keyName: string, keyCode: number): string { //These key
   return '' //If an unknown key is pressed, a string should be returned
 }
 
-export function buildKeyPressEvent(interpreter: Interpreter, keyCode: string): RuntimeObject {
-  return interpreter.list(
+export function buildKeyPressEvent(interpreter: Interpreter, keyCode: string): RuntimeObject[] {
+  return [
     interpreter.reify('keypress'),
-    interpreter.reify(keyCode)
-  )
+    interpreter.reify(keyCode),
+  ]
 }
 
-export function buildKeyReleaseEvent(interpreter: Interpreter, keyCode: string): RuntimeObject {
-  return interpreter.list(
+export function buildKeyReleaseEvent(interpreter: Interpreter, keyCode: string): RuntimeObject[] {
+  return [
     interpreter.reify('keyrelease'),
-    interpreter.reify(keyCode)
-  )
+    interpreter.reify(keyCode),
+  ]
+}
+
+export function buildMouseClickedEvent(interpreter: Interpreter, position: Position): RuntimeObject[] {
+  return [
+    interpreter.reify('mouseclick'),
+    wPosition(interpreter, position),
+  ]
+}
+
+export function buildDoubleClickedEvent(interpreter: Interpreter, position: Position): RuntimeObject[] {
+  return [
+    interpreter.reify('doubleclick'),
+    wPosition(interpreter, position),
+  ]
+}
+
+export function wPosition(interpreter: Interpreter, { x, y }: Position): RuntimeObject {
+  return interpreter.send('at', interpreter.object('wollok.game.game'), interpreter.reify(x), interpreter.reify(y))!
+}
+
+export function pixelsToPosition(x: number, y: number, board: { width: number; height: number; cellSize: number }, canvasHeight: number): Position {
+  const boardX = Math.floor(x / board.cellSize)
+  const boardY = Math.floor((canvasHeight - y) / board.cellSize)
+  return { x: Math.max(0, Math.min(boardX, board.width - 1)), y: Math.max(0, Math.min(boardY, board.height - 1)) }
+}
+
+export function positionToPixels(position: Position, canvasHeight: number, cellSize: number): Position {
+  return { x: position.x * cellSize, y: canvasHeight - (position.y + 1) * cellSize }
 }
 
 export interface VisualState {
@@ -69,10 +97,10 @@ export function visualState(interpreter: Interpreter, visual: RuntimeObject): Vi
   const image = invokeMethod(interpreter, visual, 'image')
   const text = invokeMethod(interpreter, visual, 'text')
   const textColor = invokeMethod(interpreter, visual, 'textColor')
-  const position = interpreter.send('position', visual)
-  const roundedPosition = interpreter.send('round', position)
-  const x = roundedPosition.get('x')!.innerNumber
-  const y = roundedPosition.get('y')!.innerNumber
+  const position = interpreter.send('position', visual)!
+  const roundedPosition = interpreter.send('round', position)!
+  const x = roundedPosition.get('x')!.innerNumber!
+  const y = roundedPosition.get('y')!.innerNumber!
   const message = visual.get('message')?.innerString
   const messageTime = visual.get('messageTime')?.innerNumber
   return { image, position: { x, y }, text, textColor, message, messageTime }
@@ -87,16 +115,16 @@ export function flushEvents(interpreter: Interpreter, ms: number): void {
 }
 
 export function canvasResolution(interpreter: Interpreter): Resolution {
-  const game = interpreter.object('wollok.game.game')
+  const game = interpreter.object(GAME_MODULE)
   const cellPixelSize = game.get('cellSize')!.innerNumber!
   const width = round(game.get('width')!.innerNumber!) * cellPixelSize
   const height = round(game.get('height')!.innerNumber!) * cellPixelSize
   return { width, height }
 }
 
-export function queueEvent(interpreter: Interpreter, ...events: RuntimeObject[]): void {
+export function queueEvent(interpreter: Interpreter, ...events: RuntimeObject[][]): void {
   const io = interpreter.object('wollok.lang.io')
-  events.forEach(e => interpreter.send('queueEvent', io, e))
+  events.forEach(e => interpreter.send('queueEvent', io, ...e))
 }
 
 export interface BoardState {
@@ -108,11 +136,11 @@ export interface BoardState {
 }
 
 export function boardState(game: RuntimeObject): BoardState {
-  const cellSize = game.get('cellSize')!.innerNumber
+  const cellSize = game.get('cellSize')!.innerNumber!
   const boardGround = game.get('boardGround')?.innerString
-  const ground = game.get('ground')!.innerString
-  const width = game.get('width')!.innerNumber
-  const height = game.get('height')!.innerNumber
+  const ground = game.get('ground')!.innerString!
+  const width = game.get('width')!.innerNumber!
+  const height = game.get('height')!.innerNumber!
   return { cellSize, boardGround, ground, width, height }
 }
 

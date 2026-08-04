@@ -6,7 +6,7 @@ import { GameSound } from './gameSound.js'
 import { step } from './render.js'
 import { sketch } from './sketch.js'
 import { Howl } from 'howler'
-import { Asset, BoardState, Resolution, SoundState, VisualState, boardState, buildKeyPressEvent, buildKeyReleaseEvent, canvasResolution, flushEvents, queueEvent, soundState, visualState } from './utils.js'
+import { Asset, BoardState, Position, Resolution, SoundState, VisualState, boardState, buildDoubleClickedEvent, buildKeyPressEvent, buildKeyReleaseEvent, buildMouseClickedEvent, canvasResolution, flushEvents, queueEvent, soundState, visualState } from './utils.js'
 
 const { round } = Math
 
@@ -27,6 +27,8 @@ export interface Game {
   get soundStates(): SoundState[]
   queueKeyPressEvent(...events: string[]): void
   queueKeyReleaseEvent(...events: string[]): void
+  queueMouseClickedEvent(position: Position): void
+  queueDoubleClickedEvent(position: Position): void
   flushEvents(ms: number): void
   step(sketch: p5, gameState: GameState): void
 }
@@ -69,6 +71,14 @@ export class LocalGame implements Game {
 
   queueKeyReleaseEvent(...events: string[]): void {
     queueEvent(this.interpreter, ...events.map(code => buildKeyReleaseEvent(this.interpreter, code)))
+  }
+
+  queueMouseClickedEvent(position: Position): void {
+    queueEvent(this.interpreter, buildMouseClickedEvent(this.interpreter, position))
+  }
+
+  queueDoubleClickedEvent(position: Position): void {
+    queueEvent(this.interpreter, buildDoubleClickedEvent(this.interpreter, position))
   }
 
   flushEvents(ms: number): void{
@@ -137,6 +147,14 @@ export class SocketGame implements Game {
 
   queueKeyReleaseEvent(...events: string[]): void {
     this.socket.emit('keyReleased', events)
+  }
+
+  queueMouseClickedEvent(position: Position): void {
+    this.socket.emit('mouseClicked', position)
+  }
+
+  queueDoubleClickedEvent(position: Position): void {
+    this.socket.emit('doubleClicked', position)
   }
 
   flushEvents(_ms: number): void {

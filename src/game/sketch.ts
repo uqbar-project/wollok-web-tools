@@ -4,7 +4,7 @@ import Game from './game.js'
 import { MediaFile } from './gameProject.js'
 import { GameSound } from './gameSound.js'
 import { resizeCanvas } from './render.js'
-import { wKeyCode } from './utils.js'
+import { pixelsToPosition, wKeyCode } from './utils.js'
 import { Howl } from 'howler'
 import BASE64_IMAGES from './images'
 
@@ -23,7 +23,7 @@ export const sketch = (game: Game, projectImages: MediaFile[], projectSounds: Me
     BASE64_IMAGES.forEach((base64Data, path) =>
       images.set(path, p.loadImage(base64Data))
     )
-    const fallbackImage = images.get('wko.png')
+    const fallbackImage = images.get('wko.png')!
     projectImages.forEach(({ possiblePaths, url }) =>
       possiblePaths.forEach(path => {
         // We can also load images as base64 strings,
@@ -69,6 +69,18 @@ export const sketch = (game: Game, projectImages: MediaFile[], projectSounds: Me
   p.keyReleased = () => {
     const keyCode = wKeyCode(p.key, p.keyCode)
     game.queueKeyReleaseEvent(keyCode, 'ANY')
+    return false
+  }
+
+  p.mouseClicked = () => {
+    const position = pixelsToPosition(p.mouseX, p.mouseY, game.board, p.height)
+    game.queueMouseClickedEvent(position)
+    return false
+  }
+
+  p.doubleClicked = () => {
+    const position = pixelsToPosition(p.mouseX, p.mouseY, game.board, p.height)
+    game.queueDoubleClickedEvent(position)
     return false
   }
 

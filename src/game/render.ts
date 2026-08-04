@@ -3,7 +3,7 @@ import { Id } from 'wollok-ts'
 import Game from './game.js'
 import { GameSound } from './gameSound.js'
 import { DrawableMessage, TEXT_SIZE, TEXT_STYLE, drawMessage } from './messages.js'
-import { hexaToColor, Position } from './utils.js'
+import { hexaToColor, positionToPixels, Position } from './utils.js'
 import { Howl } from 'howler'
 
 const { round, min } = Math
@@ -175,16 +175,16 @@ function render(game: Game, sketch: p5, images: Map<string, p5.Image>) {
   for (const visual of game.visuals) {
     const { image: stateImage, position, message, messageTime, text, textColor } = visual
     const drawable = stateImage === undefined ? {} : baseDrawable(images, stateImage)
-    let x = position.x * cellSize
-    let y = sketch.height - (position.y + 1) * cellSize
+    let { x, y } = positionToPixels(position, sketch.height, cellSize)
 
     if (stateImage) {
-      x = position.x * cellSize
-      y = sketch.height - position.y * cellSize - drawable.drawableImage!.image.height
+      const pixelPosition = positionToPixels({ ...position, y: position.y + 1 }, sketch.height, cellSize)
+      x = pixelPosition.x
+      y = pixelPosition.y - drawable.drawableImage!.image.height
       moveAllTo(drawable, { x, y })
     }
 
-    if (message && messageTime > sketch.millis())
+    if (message && messageTime! > sketch.millis())
       messagesToDraw.push({ message, x, y })
 
     draw(sketch, drawable)

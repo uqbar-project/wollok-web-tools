@@ -3,7 +3,7 @@ import wollok.game.*
 object pepita {
     var energia = 100
     var property position = game.at(1,1)
-    const property image = 'uqbar.png'
+    const property image = 'wko.png'
     // const property text = 'Pepita'
     
 }
@@ -14,5 +14,6 @@ program juego {
         game.say(pepita, "Ouch") 
         game.sound('musica.mp3').play()
     })
+    game.onClickDo({ pos => pepita.position(pos) })
     game.start()
 }
