@@ -1,6 +1,11 @@
 
 # Changelog
 
+## v2.1.0
+**Wollok TS Version: `4.3.0`**
+- 🎹 Key release event
+- 🐁 Mouse click events
+
 ## v2.0.0
 **Wollok TS Version: `4.2.3`**
 - 🎵 Use Howler for sounds
