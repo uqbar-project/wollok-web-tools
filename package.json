@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "test": "mocha --loader=ts-node/esm --parallel test/**/*.spec.ts",
-    "test:game": "http-server -o ./test/game",
+    "test:game": "http-server -o ./example",
     "watch": "npm run build:lib && webpack watch --mode development",
     "build:lib": "rimraf dist && tsc -p ./tsconfig.build.json",
     "build": "npm run build:lib && webpack --mode production",
