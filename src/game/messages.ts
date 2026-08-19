@@ -91,3 +91,7 @@ export const drawMessage = (drawer: MessageDrawer) => (message: DrawableMessage)
   const textY = backgroundPosition.y + PADDING
   drawer.text(message.message, textX, textY, limit.x, limit.y)
 }
+
+export function newMessage(message: string, x: number, y: number, height: number = 0): DrawableMessage {
+  return { message, x, y: y - height }
+}

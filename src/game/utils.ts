@@ -3,6 +3,8 @@ import { GAME_MODULE, Id, Interpreter, RuntimeObject } from 'wollok-ts'
 export const VALID_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif']
 export const VALID_SOUND_EXTENSIONS = ['mp3', 'ogg', 'wav']
 
+export const DEFAULT_IMAGE = 'wko.png'
+
 const { round } = Math
 
 function invokeMethod(interpreter: Interpreter, visual: RuntimeObject, method: string) {
@@ -67,7 +69,7 @@ export function pixelsToPosition(x: number, y: number, board: { width: number; h
 }
 
 export function positionToPixels(position: Position, canvasHeight: number, cellSize: number): Position {
-  return { x: position.x * cellSize, y: canvasHeight - (position.y + 1) * cellSize }
+  return { x: position.x * cellSize, y: canvasHeight - position.y * cellSize }
 }
 
 export interface VisualState {

@@ -1,19 +1,20 @@
 import wollok.game.*
 
 object pepita {
-    var energia = 100
-    var property position = game.at(1,1)
-    const property image = 'wko.png'
-    // const property text = 'Pepita'
+  var energia = 100
+  var property position = game.origin()
+  const property image = 'wko.png'
+  const property text = 'Pepita'
     
 }
 
 program juego {
-    game.addVisualCharacter(pepita)
-    keyboard.space().onPressDo({ 
-        game.say(pepita, "Ouch") 
-        game.sound('musica.mp3').play()
-    })
-    game.onClickDo({ pos => pepita.position(pos) })
-    game.start()
+  // game.cellSize(40)
+  game.addVisualCharacter(pepita)
+  keyboard.space().onPressDo({ 
+      game.say(pepita, "Ouch") 
+      game.sound('musica.mp3').play()
+  })
+  game.onClickDo({ pos => pepita.position(pos) })
+  game.start()
 }

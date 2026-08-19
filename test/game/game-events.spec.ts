@@ -8,7 +8,7 @@ describe('Game', () => {
 
   it('converts board-cell positions back into pixel coordinates', () => {
     const pixels = positionToPixels({ x: 2, y: 0 }, 100, 10)
-    pixels.should.deep.equal({ x: 20, y: 90 })
+    pixels.should.deep.equal({ x: 20, y: 100 })
   })
 
   it('converts cursor pixels into board-cell positions', () => {

@@ -1,12 +1,17 @@
+import { Howl } from 'howler'
 import p5, { Renderer } from 'p5'
 import { Id } from 'wollok-ts'
 import Game from './game.js'
 import { GameSound } from './gameSound.js'
-import { DrawableMessage, TEXT_SIZE, TEXT_STYLE, drawMessage } from './messages.js'
-import { hexaToColor, positionToPixels, Position } from './utils.js'
-import { Howl } from 'howler'
+import { DrawableMessage, TEXT_SIZE, TEXT_STYLE, drawMessage, newMessage } from './messages.js'
+import { BoardState, DEFAULT_IMAGE, Position, hexaToColor, positionToPixels } from './utils.js'
 
 const { round, min } = Math
+
+const IMAGE_NOT_FOUND = {
+  color: 'black', horizAlign: p5.prototype.LEFT,
+  vertAlign: p5.prototype.TOP, text: 'IMAGE\n  NOT\nFOUND',
+}
 
 export interface Drawable {
   drawableImage?: DrawableImage;
@@ -53,20 +58,42 @@ export function write(sketch: p5, drawableText: DrawableText): void {
   sketch.text(drawableText.text, x, y)
 }
 
-export function baseDrawable(images: Map<string, p5.Image>, path?: string): Drawable {
-  const origin: Position = { x: 0, y: 0 }
-  const p5Image = path && images.get(removeIfStartsWith(path, './'))
-
-  if (!p5Image) {
-    const drawableText = {
-      color: 'black', horizAlign: p5.prototype.LEFT,
-      vertAlign: p5.prototype.TOP, text: 'IMAGE\n  NOT\nFOUND', position: origin,
-    }
-    return { drawableImage: { image: images.get('wko.png')!, position: origin }, drawableText }
-  }
-
-  return { drawableImage: { image: p5Image, position: origin } }
+export function pathToImage(images: Map<string, p5.Image>, path?: string): p5.Image | undefined {
+  return path ? images.get(removeIfStartsWith(path, './')) : undefined
 }
+
+export function drawImage(images: Map<string, p5.Image>, image: string, sketch: p5, x: number, y: number): void {
+  const drawable = pathToImage(images, image)
+  if (drawable) {
+    sketch.image(drawable, x, y - drawable.height)
+  } else {
+    sketch.image(images.get(DEFAULT_IMAGE)!, x, y)
+    write(sketch, { ...IMAGE_NOT_FOUND, position: { x, y } })
+  }
+}
+
+export function drawText(sketch: p5, text: string, x: number, y: number, cellSize: number, textColor?: string): void {
+  const halfCell = 0.5 * cellSize
+  const textPosition = { x: x + halfCell, y: y - halfCell }
+  const drawableText = { text, position: textPosition, color: hexaToColor(textColor) }
+  write(sketch, drawableText)
+}
+
+export function drawBackground(sketch: p5, board: BoardState, images: Map<string, p5.Image>): void {
+  const { cellSize, boardGround, ground, width, height } = board
+
+  if (boardGround) sketch.image(pathToImage(images, boardGround)!, 0, 0, sketch.width, sketch.height)
+  else {
+    const groundImage = pathToImage(images, ground)!
+    const gameWidth = round(width)
+    const gameHeight = round(height)
+
+    for (let x = 0; x < gameWidth; x++)
+      for (let y = 0; y < gameHeight; y++)
+        sketch.image(groundImage, x * cellSize, y * cellSize, cellSize, cellSize)
+  }
+}
+
 
 export function moveAllTo(drawable: Drawable, position: Position): void {
   const { drawableImage, drawableText } = drawable
@@ -91,10 +118,8 @@ export function removeIfStartsWith(path: string, prefix: string): string {
   if (path.startsWith(prefix)) {
     return path.replace(prefix, '')
   }
-
   return path
 }
-
 
 // ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 // GAME CYCLE
@@ -158,46 +183,25 @@ export function updateSound(game: Game, sounds: Map<string, Howl>, currentSounds
 }
 
 function render(game: Game, sketch: p5, images: Map<string, p5.Image>) {
-  const { cellSize, boardGround, ground, width, height } = game.board
-
-  if (boardGround) sketch.image(baseDrawable(images, boardGround).drawableImage!.image, 0, 0, sketch.width, sketch.height)
-  else {
-    const groundImage = baseDrawable(images, ground).drawableImage!.image
-    const gameWidth = round(width)
-    const gameHeight = round(height)
-
-    for (let x = 0; x < gameWidth; x++)
-      for (let y = 0; y < gameHeight; y++)
-        sketch.image(groundImage, x * cellSize, y * cellSize, cellSize, cellSize)
-  }
+  drawBackground(sketch, game.board, images)
 
   const messagesToDraw: DrawableMessage[] = []
+
   for (const visual of game.visuals) {
-    const { image: stateImage, position, message, messageTime, text, textColor } = visual
-    const drawable = stateImage === undefined ? {} : baseDrawable(images, stateImage)
-    let { x, y } = positionToPixels(position, sketch.height, cellSize)
+    const { image, position, message, messageTime, text, textColor } = visual
+    const { cellSize } = game.board
+    const { x, y } = positionToPixels(position, sketch.height, cellSize)
 
-    if (stateImage) {
-      const pixelPosition = positionToPixels({ ...position, y: position.y + 1 }, sketch.height, cellSize)
-      x = pixelPosition.x
-      y = pixelPosition.y - drawable.drawableImage!.image.height
-      moveAllTo(drawable, { x, y })
-    }
+    if (image !== undefined)
+      drawImage(images, image, sketch, x, y)
 
-    if (message && messageTime! > sketch.millis())
-      messagesToDraw.push({ message, x, y })
+    if (text)
+      drawText(sketch, text, x, y, cellSize, textColor)
 
-    draw(sketch, drawable)
-
-    if (text) {
-      x = (position.x + 0.5) * cellSize
-      y = sketch.height - (position.y + 0.5) * cellSize
-      const drawableText = { text, position: { x, y }, color: hexaToColor(textColor) }
-      write(sketch, drawableText)
-    }
+    if (message && messageTime! > sketch.millis()) // Collect the messages to be draw NOW
+      messagesToDraw.push(newMessage(message, x, y, pathToImage(images, image)?.height))
   }
 
+  // Draw the messages last (on top of the visuals)
   messagesToDraw.forEach(drawMessage(sketch))
-
-
 }
