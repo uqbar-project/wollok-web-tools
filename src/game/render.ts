@@ -67,8 +67,9 @@ export function drawImage(images: Map<string, p5.Image>, image: string, sketch: 
   if (drawable) {
     sketch.image(drawable, x, y - drawable.height)
   } else {
-    sketch.image(images.get(DEFAULT_IMAGE)!, x, y)
-    write(sketch, { ...IMAGE_NOT_FOUND, position: { x, y } })
+    const defaultImage = images.get(DEFAULT_IMAGE)!
+    sketch.image(defaultImage, x, y - defaultImage.height)
+    write(sketch, { ...IMAGE_NOT_FOUND, position: { x, y: y - defaultImage.height } })
   }
 }
 
