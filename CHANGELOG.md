@@ -1,6 +1,10 @@
 
 # Changelog
 
+## v2.1.1
+**Wollok TS Version: `4.3.0`**
+- 🔥 Fix visual's position
+
 ## v2.1.0
 **Wollok TS Version: `4.3.0`**
 - 🎹 Key release event
