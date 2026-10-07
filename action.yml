@@ -163,12 +163,12 @@ runs:
                   sources,
 
                   images: imagePaths.map(path => ({
-                      possiblePaths: [path],
+                      possiblePaths: [path, path.split("/").slice(1).join("/")],
                       url: `./${path}`
                   })),
 
                   sounds: soundPaths.map(path => ({
-                      possiblePaths: [path],
+                      possiblePaths: [path, path.split("/").slice(1).join("/")],
                       url: `./${path}`
                   }))
               }))
