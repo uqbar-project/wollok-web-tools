@@ -1,0 +1,191 @@
+name: Generate Wollok Game Page
+description: Generate a GitHub Pages site for a Wollok Game project
+
+runs:
+  using: composite
+
+  steps:
+  - uses: actions/checkout@v4
+
+  - name: Install wollok-web-tools
+    shell: bash
+    run: npm install wollok-web-tools
+
+  - name: Copy game runtime
+    shell: bash
+    run: |
+      cp node_modules/wollok-web-tools/dist/web/game-index.js ./game-index.js
+
+  - name: Generate paths.txt
+    shell: bash
+    run: |
+      find . -type f \
+        -not -path './.git/*' \
+        -not -path './node_modules/*' \
+        -not -path './.github/*' \
+        -not -name 'paths.txt' \
+        -not -name 'game-index.js' \
+        -not -name 'index.html' \
+        -not -name 'game-runner.js' \
+        | sed 's|^\./||' \
+        > paths.txt
+
+  - name: Generate index.html
+    shell: bash
+    run: |
+      cat > index.html <<'EOF'
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <link rel="stylesheet" href="game.css" />
+
+          <style>
+            #loading {
+              font-family: sans-serif;
+              padding: 2rem;
+              text-align: center;
+            }
+
+            #loading-status {
+              margin-top: 1rem;
+              font-size: 0.9rem;
+              opacity: 0.7;
+            }
+          </style>
+
+          <script>
+            var process = {};
+          </script>
+
+          <script src="./game-index.js"></script>
+        </head>
+
+        <body>
+          <div id="loading">
+            <div id="loading-message">Cargando...</div>
+            <div id="loading-status"></div>
+          </div>
+
+          <main>
+            <div id="game" class="game"></div>
+          </main>
+
+          <script src="./game-runner.js"></script>
+        </body>
+      </html>
+      EOF
+
+  - name: Generate game-runner.js
+    shell: bash
+    run: |
+      cat > game-runner.js <<'EOF'
+      const parent = document.getElementById('game')
+      const loading = document.getElementById('loading')
+      const loadingMessage = document.getElementById('loading-message')
+      const loadingStatus = document.getElementById('loading-status')
+
+      const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp']
+      const soundExtensions = ['.mp3', '.wav', '.ogg']
+
+      const isExtension = (path, extensions) =>
+          extensions.some(extension =>
+              path.toLowerCase().endsWith(extension)
+          )
+
+      const status = message => {
+          loadingMessage.textContent = message
+      }
+
+      const progress = (current, total) => {
+          loadingStatus.textContent = `${current} / ${total}`
+      }
+
+      const fetchFile = (path, current, total) => {
+          status(`Cargando ${path}`)
+          progress(current, total)
+
+          return fetch(`./${path}`)
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error(
+                          `Could not load ${path}: ${response.status}`
+                      )
+                  }
+
+                  return response.text()
+              })
+              .then(content => ({
+                  name: path,
+                  content
+              }))
+      }
+
+      status('Buscando archivos del proyecto...')
+
+      fetch('./paths.txt')
+          .then(response => response.text())
+          .then(text => {
+              const paths = text
+                  .split('\n')
+                  .map(path => path.trim())
+                  .filter(path => path !== '')
+
+              const sourcePaths = paths.filter(path =>
+                  path.endsWith('.wlk') || path.endsWith('.wpgm')
+              )
+
+              const imagePaths = paths.filter(path =>
+                  isExtension(path, imageExtensions)
+              )
+
+              const soundPaths = paths.filter(path =>
+                  isExtension(path, soundExtensions)
+              )
+
+              const totalFiles =
+                  sourcePaths.length +
+                  imagePaths.length +
+                  soundPaths.length
+
+              let current = 0
+
+              status(`Cargando proyecto (${totalFiles} archivos)...`)
+
+              const main = sourcePaths.find(path => path.endsWith('.wpgm')).slice(0, -5)
+
+              return Promise.all(
+                  sourcePaths.map(path =>
+                      fetchFile(path, ++current, totalFiles)
+                  )
+              ).then(sources => ({
+                  main,
+
+                  sources,
+
+                  images: imagePaths.map(path => ({
+                      possiblePaths: [path, path.split("/").slice(1).join("/")],
+                      url: `./${path}`
+                  })),
+
+                  sounds: soundPaths.map(path => ({
+                      possiblePaths: [path, path.split("/").slice(1).join("/")],
+                      url: `./${path}`
+                  }))
+              }))
+          })
+          .then(project => {
+              status('Iniciando juego...')
+              loadingStatus.textContent = ''
+
+              return new LocalGame(project).start(parent)
+          })
+          .then(() => {
+              loading.remove()
+          })
+          .catch(error => {
+              console.error(error)
+
+              loadingMessage.textContent = 'Error al cargar el juego'
+              loadingStatus.textContent = error.message
+          })
+      EOF
