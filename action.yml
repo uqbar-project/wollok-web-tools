@@ -26,7 +26,7 @@ runs:
         -not -name 'paths.txt' \
         -not -name 'game-index.js' \
         -not -name 'index.html' \
-        -not -name 'test.js' \
+        -not -name 'game-runner.js' \
         | sed 's|^\./||' \
         > paths.txt
 
@@ -70,15 +70,15 @@ runs:
             <div id="game" class="game"></div>
           </main>
 
-          <script src="./test.js"></script>
+          <script src="./game-runner.js"></script>
         </body>
       </html>
       EOF
 
-  - name: Generate test.js
+  - name: Generate game-runner.js
     shell: bash
     run: |
-      cat > test.js <<'EOF'
+      cat > game-runner.js <<'EOF'
       const parent = document.getElementById('game')
       const loading = document.getElementById('loading')
       const loadingMessage = document.getElementById('loading-message')
