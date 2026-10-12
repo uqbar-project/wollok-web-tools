@@ -24,7 +24,10 @@ export class GameSound {
 
   public update(newSoundState: SoundState): void {
     this.soundFile.loop(newSoundState.loop)
-    this.soundFile.volume(newSoundState.volume)
+    if (newSoundState.volume !== this.soundFile.volume()) {
+      // This is an expensive call, do it only if needed
+      this.soundFile.volume(newSoundState.volume)
+    }
     this.toBePlayed = this.canBePlayed(newSoundState)
     this.lastSoundState = newSoundState
   }
