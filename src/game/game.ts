@@ -6,7 +6,7 @@ import { GameSound } from './gameSound.js'
 import { step } from './render.js'
 import { sketch } from './sketch.js'
 import { Howl } from 'howler'
-import { Asset, BoardState, Position, Resolution, SoundState, VisualState, boardState, buildDoubleClickedEvent, buildKeyPressEvent, buildKeyReleaseEvent, buildMouseClickedEvent, canvasResolution, flushEvents, queueEvent, soundState, visualState } from './utils.js'
+import { Asset, BoardState, Position, Resolution, SoundState, VisualState, boardState, buildDoubleClickedEvent, buildKeyPressEvent, buildKeyReleaseEvent, buildMouseClickedEvent, canvasResolution, emptyBoard, flushEvents, queueEvent, soundState, visualState } from './utils.js'
 
 const { round } = Math
 
@@ -95,7 +95,7 @@ export class LocalGame implements Game {
 export class SocketGame implements Game {
   socket: Socket
 
-  board: BoardState
+  board: BoardState = emptyBoard
   images: MediaFile[] = []
   sounds: MediaFile[] = []
 

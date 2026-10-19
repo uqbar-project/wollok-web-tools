@@ -137,6 +137,13 @@ export interface BoardState {
   height: number
 }
 
+export const emptyBoard: BoardState = {
+  cellSize: 0,
+  ground: "ground.png",
+  width: 0,
+  height: 0,
+}
+
 export function boardState(game: RuntimeObject): BoardState {
   const cellSize = game.get('cellSize')!.innerNumber!
   const boardGround = game.get('boardGround')?.innerString
