@@ -1,6 +1,6 @@
 import { should } from 'chai'
 import { buildEnvironment, interpret, Interpreter, WRENatives } from 'wollok-ts'
-import { buildDoubleClickedEvent, buildKeyPressEvent, buildKeyReleaseEvent, buildMouseClickedEvent, pixelsToPosition, positionToPixels } from '../../src/game/utils.js'
+import { buildDoubleClickedEvent, buildKeyPressEvent, buildKeyReleaseEvent, buildMouseClickedEvent, pixelsToPosition, positionToPixels, visualState } from '../../src/game/utils.js'
 
 should()
 
@@ -17,6 +17,49 @@ describe('Game', () => {
     pixelsToPosition(10, 1, board, 100).should.deep.equal({ x: 1, y: 9 })
     pixelsToPosition(10, 11, board, 100).should.deep.equal({ x: 1, y: 8 })
     pixelsToPosition(0, 11, board, 100).should.deep.equal({ x: 0, y: 8 })
+  })
+
+  describe('visual state', () => {
+    let interpreter: Interpreter
+
+    beforeEach(() => {
+      const environment = buildEnvironment([{
+        name: 'main.wlk', content: `
+          import wollok.game.*
+          object enCelda { method position() = game.at(2, 3)  method image() = "pepita.png" }
+          object conDecimales { method position() = game.at(1.4, 2.6) }
+          object negativo { method position() = game.at(-1.6, -0.4) }
+          object mutable { const property position = new MutablePosition(x = 4.5, y = 1.2) }
+          object centrado { method position() = game.center() }
+          object conTexto { method position() = game.origin()  method text() = "hola"  method textColor() = "FF0000" }
+        `,
+      }])
+      interpreter = interpret(environment, WRENatives)
+    })
+
+    const stateOf = (name: string) => visualState(interpreter, interpreter.object(`main.${name}`))
+
+    it('takes the position and the image of the visual', () => {
+      stateOf('enCelda').should.deep.include({ image: 'pepita.png', position: { x: 2, y: 3 } })
+    })
+
+    it('rounds the position to a board cell', () => {
+      stateOf('conDecimales').position.should.deep.equal({ x: 1, y: 3 })
+      stateOf('negativo').position.x.should.equal(-2)
+      Math.abs(stateOf('negativo').position.y).should.equal(0)
+      stateOf('mutable').position.should.deep.equal({ x: 5, y: 1 })
+    })
+
+    it('works with positions whose coordinates are computed by a method', () => {
+      const game = interpreter.object('wollok.game.game')
+      const xCenter = interpreter.send('xCenter', game)!.innerNumber!
+      const yCenter = interpreter.send('yCenter', game)!.innerNumber!
+      stateOf('centrado').position.should.deep.equal({ x: Math.round(xCenter), y: Math.round(yCenter) })
+    })
+
+    it('takes the text and its color', () => {
+      stateOf('conTexto').should.deep.include({ text: 'hola', textColor: 'FF0000', position: { x: 0, y: 0 } })
+    })
   })
 
   describe('events', () => {

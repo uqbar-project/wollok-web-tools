@@ -95,14 +95,24 @@ export interface Resolution {
 
 export function hexaToColor(textColor?: string): string | undefined { return !textColor ? undefined : '#' + textColor }
 
+/**
+ * Reads a coordinate of a position and rounds it to a board cell.
+ * If the getter comes from a property it reads the variable directly, avoiding a message send.
+ * Rounding here avoids sending `round()` to the position, which instantiates a new position for every visual on every frame.
+ */
+function roundedCoordinate(interpreter: Interpreter, position: RuntimeObject, coordinate: 'x' | 'y'): number {
+  const getter = position.module.lookupMethod(coordinate, 0)
+  const value = getter?.isSynthetic ? position.get(coordinate) : interpreter.send(coordinate, position)
+  return round(value!.innerNumber!)
+}
+
 export function visualState(interpreter: Interpreter, visual: RuntimeObject): VisualState {
   const image = invokeMethod(interpreter, visual, 'image')
   const text = invokeMethod(interpreter, visual, 'text')
   const textColor = invokeMethod(interpreter, visual, 'textColor')
   const position = interpreter.send('position', visual)!
-  const roundedPosition = interpreter.send('round', position)!
-  const x = roundedPosition.get('x')!.innerNumber!
-  const y = roundedPosition.get('y')!.innerNumber!
+  const x = roundedCoordinate(interpreter, position, 'x')
+  const y = roundedCoordinate(interpreter, position, 'y')
   const message = visual.get('message')?.innerString
   const messageTime = visual.get('messageTime')?.innerNumber
   return { image, position: { x, y }, text, textColor, message, messageTime }
