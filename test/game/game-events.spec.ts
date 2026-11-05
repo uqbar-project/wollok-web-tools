@@ -1,6 +1,6 @@
 import { should } from 'chai'
 import { buildEnvironment, interpret, Interpreter, WRENatives } from 'wollok-ts'
-import { buildDoubleClickedEvent, buildKeyPressEvent, buildKeyReleaseEvent, buildMouseClickedEvent, pixelsToPosition, positionToPixels } from '../../src/game/utils.js'
+import { buildDoubleClickedEvent, buildKeyPressEvent, buildKeyReleaseEvent, buildMouseClickedEvent, pixelsToPosition, positionToPixels, visualState } from '../../src/game/utils.js'
 
 should()
 
@@ -51,6 +51,54 @@ describe('Game', () => {
       const event = buildKeyReleaseEvent(interpreter, 'KeyA')
       const values = event.map(entry => entry.innerString)
       values.should.deep.equal(['keyrelease', 'KeyA'])
+    })
+  })
+
+  describe('visual state', () => {
+    let interpreter: Interpreter
+
+    beforeEach(() => {
+      const environment = buildEnvironment([{
+        name: 'main.wlk', content: `
+          import wollok.game.*
+
+          object nada {
+            method position() = game.at(1, 2)
+          }
+
+          object texto {
+            method position() = game.at(3, 4)
+            method text() = 'pepita'
+            method textColor() = 'FF0000'
+            method textSize() = 67
+          }
+        `,
+      }])
+      interpreter = interpret(environment, WRENatives)
+    })
+
+    it('reads text, color and size from the visual', () => {
+      visualState(interpreter, interpreter.object('main.texto')).should.deep.equal({
+        image: undefined,
+        position: { x: 3, y: 4 },
+        text: 'pepita',
+        textColor: 'FF0000',
+        textSize: 67,
+        message: undefined,
+        messageTime: undefined,
+      })
+    })
+
+    it('leaves text, color and size undefined when the visual does not define them', () => {
+      visualState(interpreter, interpreter.object('main.nada')).should.deep.equal({
+        image: undefined,
+        position: { x: 1, y: 2 },
+        text: undefined,
+        textColor: undefined,
+        textSize: undefined,
+        message: undefined,
+        messageTime: undefined,
+      })
     })
   })
 })
