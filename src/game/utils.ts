@@ -9,7 +9,7 @@ const { round } = Math
 
 function invokeMethod(interpreter: Interpreter, visual: RuntimeObject, method: string) {
   const lookedUpMethod = visual.module.lookupMethod(method, 0)
-  return lookedUpMethod && interpreter.invoke(lookedUpMethod, visual)!.innerString
+  return lookedUpMethod && interpreter.invoke(lookedUpMethod, visual)!
 }
 
 export function wKeyCode(keyName: string, keyCode: number): string { //These keyCodes correspond to http://keycode.info/
@@ -79,6 +79,7 @@ export interface VisualState {
   messageTime?: number
   text?: string
   textColor?: string
+  textSize?: number
 }
 export interface Position {
   x: number
@@ -96,16 +97,17 @@ export interface Resolution {
 export function hexaToColor(textColor?: string): string | undefined { return !textColor ? undefined : '#' + textColor }
 
 export function visualState(interpreter: Interpreter, visual: RuntimeObject): VisualState {
-  const image = invokeMethod(interpreter, visual, 'image')
-  const text = invokeMethod(interpreter, visual, 'text')
-  const textColor = invokeMethod(interpreter, visual, 'textColor')
+  const image = invokeMethod(interpreter, visual, 'image')?.innerString
+  const text = invokeMethod(interpreter, visual, 'text')?.innerString
+  const textColor = invokeMethod(interpreter, visual, 'textColor')?.innerString
+  const textSize = invokeMethod(interpreter, visual, 'textSize')?.innerNumber
   const position = interpreter.send('position', visual)!
   const roundedPosition = interpreter.send('round', position)!
   const x = roundedPosition.get('x')!.innerNumber!
   const y = roundedPosition.get('y')!.innerNumber!
   const message = visual.get('message')?.innerString
   const messageTime = visual.get('messageTime')?.innerNumber
-  return { image, position: { x, y }, text, textColor, message, messageTime }
+  return { image, position: { x, y }, text, textColor, textSize, message, messageTime }
 }
 
 export function flushEvents(interpreter: Interpreter, ms: number): void {
