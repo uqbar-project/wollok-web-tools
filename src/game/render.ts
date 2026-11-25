@@ -73,10 +73,10 @@ export function drawImage(images: Map<string, p5.Image>, image: string, sketch: 
   }
 }
 
-export function drawText(sketch: p5, text: string, x: number, y: number, cellSize: number, textColor?: string): void {
+export function drawText(sketch: p5, text: string, x: number, y: number, cellSize: number, textColor?: string, textSize?: number): void {
   const halfCell = 0.5 * cellSize
   const textPosition = { x: x + halfCell, y: y - halfCell }
-  const drawableText = { text, position: textPosition, color: hexaToColor(textColor) }
+  const drawableText = { text, position: textPosition, color: hexaToColor(textColor), size: textSize }
   write(sketch, drawableText)
 }
 
@@ -189,7 +189,7 @@ function render(game: Game, sketch: p5, images: Map<string, p5.Image>) {
   const messagesToDraw: DrawableMessage[] = []
 
   for (const visual of game.visuals) {
-    const { image, position, message, messageTime, text, textColor } = visual
+    const { image, position, message, messageTime, text, textColor, textSize } = visual
     const { cellSize } = game.board
     const { x, y } = positionToPixels(position, sketch.height, cellSize)
 
@@ -197,7 +197,7 @@ function render(game: Game, sketch: p5, images: Map<string, p5.Image>) {
       drawImage(images, image, sketch, x, y)
 
     if (text)
-      drawText(sketch, text, x, y, cellSize, textColor)
+      drawText(sketch, text, x, y, cellSize, textColor, textSize)
 
     if (message && messageTime! > sketch.millis()) // Collect the messages to be draw NOW
       messagesToDraw.push(newMessage(message, x, y, pathToImage(images, image)?.height))
